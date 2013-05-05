@@ -25,7 +25,6 @@ public class GameThread extends Thread {
 			for(Mob m : level.getEnemies()) {
 				level.desiredMove(Compass.values()[(int) (Math.random() * 3)], m);
 			}
-			System.out.println("Mobs are moving...");
 			try { Thread.sleep(1000); } catch (InterruptedException e) { }
 		}
 		System.out.println("Exiting thread...");
