@@ -7,9 +7,9 @@ import DungeonPack.DungeonMain.Compass;
 // Contains floor related information, including:
 // dimensions of map, rock and mob lists
 public class DungeonFloor {
-	public final int 	MAP_HEIGHT = 500;
-	public final int 	MAP_WIDTH = 500;
-	public final int	UNIT_SIZE = 50;
+	public static final int 	MAP_HEIGHT = 500;
+	public static final int 	MAP_WIDTH = 500;
+	public static final int		UNIT_SIZE = 50;
 	
 	private ArrayList<GameObject> objects; // keeps track of all 'units' on THIS floor
 	private ArrayList<InanimateObject> rocks;
@@ -88,6 +88,16 @@ public class DungeonFloor {
 			}
 			*/
 			
+		}
+	}
+	
+	public void desiredMove(Compass direction, AnimateObject mover) {
+		switch(direction) {
+			case WEST:	moveWest(mover);	break;
+			case EAST:	moveEast(mover);	break;
+			case NORTH:	moveNorth(mover);	break;
+			case SOUTH:	moveSouth(mover);	break;
+			default: System.out.println("invalid direction..");
 		}
 	}
 	

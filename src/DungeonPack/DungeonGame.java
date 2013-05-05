@@ -26,12 +26,11 @@ public class DungeonGame {
 	
 	private Hero hero;
 	private DungeonFloor level;
-	public int UNIT;
+	private GameThread mobThread;
 	
 	public DungeonGame() {
 		
 		level = new DungeonFloor();
-		UNIT = level.UNIT_SIZE;
 		System.out.print("Rocks...");
 		for(InanimateObject inan : level.getRocks()) {
 			System.out.print(inan.toString());
@@ -46,6 +45,9 @@ public class DungeonGame {
 		
 		// Hero Generation
 		hero = level.getHero();
+		
+		// Thread Generation
+		mobThread = new GameThread(level);
 	}
 	
 	public void beginGame() {
@@ -55,29 +57,31 @@ public class DungeonGame {
 	}
 	
 	public void updateGame() {
-		for(Mob m : level.getEnemies()) {
-			desiredMove(Compass.values()[(int) (Math.random() * 3)], m);
-		}
+		
 	}
 	
+	// TODO: Method is currently redundant. Moved down to DungeonFloor
 	public void desiredMove(Compass direction, AnimateObject mover) {
 		switch(direction) {
 			case WEST:	level.moveWest(mover);	break;
 			case EAST:	level.moveEast(mover);	break;
 			case NORTH:	level.moveNorth(mover);	break;
 			case SOUTH:	level.moveSouth(mover);	break;
-			default:	System.out.println("invalid direction..");
+			default: System.out.println("invalid direction..");
 		}
 	}
 	
+	
+	// TODO: Method is currently redundant.
 	public boolean checkMove(int newY, int newX) {
+		int unit = DungeonFloor.UNIT_SIZE;
 		Point topLeft = new Point(newX, newY);
-		Point topRight = new Point(newX + UNIT, newY);
-		Point bottomLeft = new Point(newX, newY + UNIT);
-		Point bottomRight = new Point(newX + UNIT, newY + UNIT);
+		Point topRight = new Point(newX + unit, newY);
+		Point bottomLeft = new Point(newX, newY + unit);
+		Point bottomRight = new Point(newX + unit, newY + unit);
 		
 		for(GameObject g : level.getObjects()) {
-			Rectangle area = new Rectangle(g.getXpos(), g.getYpos(), UNIT, UNIT);
+			Rectangle area = new Rectangle(g.getXpos(), g.getYpos(), unit, unit);
 			if(area.contains(bottomRight) || area.contains(bottomLeft) ||
 					area.contains(topRight) || area.contains(topLeft)) {
 				System.out.println("Collision Detected..");
@@ -94,4 +98,5 @@ public class DungeonGame {
 	// Get Methods
 	public Hero getHero() { return hero; }
 	public DungeonFloor getFloor() { return level; }
+	public GameThread getThread() { return mobThread; }
 }

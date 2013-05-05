@@ -67,7 +67,7 @@ public class DungeonMain {
 		floor.addListener(SWT.Paint, new Listener () {
 			public void handleEvent (Event event) {
 				ArrayList<GameObject> objects = newGame.getFloor().getObjects();
-				int unit = newGame.UNIT;
+				int unit = DungeonFloor.UNIT_SIZE;
 				for(GameObject obj : objects) {
 					String life = "";
 					if(obj instanceof Mob) {
@@ -125,16 +125,16 @@ public class DungeonMain {
 		shell.addKeyListener(new KeyListener() {
 			public void keyPressed(KeyEvent e) {
 				if(e.keyCode == 97) {
-					newGame.desiredMove(Compass.WEST, newGame.getHero());
+					newGame.getFloor().desiredMove(Compass.WEST, newGame.getHero());
 				}
 				else if(e.keyCode == 100) {
-					newGame.desiredMove(Compass.EAST, newGame.getHero());
+					newGame.getFloor().desiredMove(Compass.EAST, newGame.getHero());
 				}
 				else if(e.keyCode == 119) {
-					newGame.desiredMove(Compass.NORTH, newGame.getHero());
+					newGame.getFloor().desiredMove(Compass.NORTH, newGame.getHero());
 				}
 				else if(e.keyCode == 115) {
-					newGame.desiredMove(Compass.SOUTH, newGame.getHero());
+					newGame.getFloor().desiredMove(Compass.SOUTH, newGame.getHero());
 				}
 				else if(e.keyCode == 122) { // Z
 					System.out.println("attacking");
@@ -146,8 +146,6 @@ public class DungeonMain {
 				else if(e.keyCode == 99) { // C
 					System.out.println(e.keyCode);
 				}
-				
-				newGame.updateGame();
 				
 				floor.redraw();
 				menu.redraw();
@@ -174,6 +172,7 @@ public class DungeonMain {
 		while (!shell.isDisposed()) {
 			if (!display.readAndDispatch()) display.sleep();
 		}
+		newGame.getThread().killProc();
 		display.dispose();
 	}
 	
