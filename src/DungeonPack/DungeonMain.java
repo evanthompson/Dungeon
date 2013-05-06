@@ -65,7 +65,7 @@ public class DungeonMain {
 		
 		// Paint Listener ///////////
 		floor.addListener(SWT.Paint, new Listener () {
-			public void handleEvent (Event event) {
+			public void handleEvent(Event event) {
 				ArrayList<GameObject> objects = newGame.getFloor().getObjects();
 				int unit = DungeonFloor.UNIT_SIZE;
 				for(GameObject obj : objects) {

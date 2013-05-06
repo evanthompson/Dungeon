@@ -1,11 +1,13 @@
 package DungeonPack;
 
+import java.util.Observable;
+
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 
 import DungeonPack.DungeonMain.Compass;
 
-public class DungeonGame {
+public class DungeonGame extends Observable {
 	/* 
 	Start Menu Options
 	-- New Game, Load Game, Exit Game
