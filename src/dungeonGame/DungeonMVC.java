@@ -1,4 +1,4 @@
-package DungeonPack;
+package dungeonGame;
 
 public class DungeonMVC {
 
@@ -11,13 +11,14 @@ public class DungeonMVC {
 		DungeonController controller = new DungeonController();
 		controller.addModel(game);
 		controller.addView(view);
+		game.updateGame();
 		
 		view.addController(controller);
 		
 	}
 	
 	public static void main(String[] args) {
-		DungeonMVC dungeonGame = new DungeonMVC();
+		DungeonMVC newnewGame = new DungeonMVC();
 	}
 
 }

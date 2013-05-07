@@ -1,29 +1,33 @@
-package DungeonPack;
-
-import DungeonPack.DungeonMain.Compass;
-
-/*
+/**
+ * ## This Class is currently Redundant ##
+ * 
  * I need to use this thread to independently modify the positions of every
  * non-player character on the field, while leaving the player free to control
  * his hero.
  * 
  */
+
+package dungeonGame;
+
+import dungeonGame.DungeonMain.Compass;
+
+
 public class GameThread extends Thread {
 	
-	private DungeonFloor level;
+	private DungeonGame game;
 	private boolean running = true;
 	
-	public GameThread(DungeonFloor floor) {
+	public GameThread(DungeonGame game) {
 		super("gameThread");
 		System.out.println("Constructing new GameThread...");
-		level = floor;
+		this.game = game;
 		start();
 	}
 	
 	public void run() {
 		while(running) {
-			for(Mob m : level.getEnemies()) {
-				level.desiredMove(Compass.values()[(int) (Math.random() * 3)], m);
+			for(Mob m : game.getFloor().getEnemies()) {
+				game.desiredMove(Compass.values()[(int) (Math.random() * 3)], m);
 			}
 			try { Thread.sleep(1000); } catch (InterruptedException e) { }
 		}
@@ -33,4 +37,5 @@ public class GameThread extends Thread {
 	public void killProc() {
 		running = false;
 	}
+	
 }

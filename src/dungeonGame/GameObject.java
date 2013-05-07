@@ -1,4 +1,4 @@
-package DungeonPack;
+package dungeonGame;
 
 // Generic object found within the environment of the game board
 public abstract class GameObject {

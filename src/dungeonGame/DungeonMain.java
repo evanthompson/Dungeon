@@ -1,6 +1,8 @@
-package DungeonPack;
+package dungeonGame;
 
 import java.util.ArrayList;
+import java.util.Observable;
+import java.util.Observer;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
@@ -17,20 +19,26 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 
-public class DungeonMain {
+public class DungeonMain implements Observer {
 	
 	public enum Compass { NORTH, SOUTH, EAST, WEST }
 	
-	public static ArrayList<Color> cleanUp;
-	public static Color dGray, gray, lGray;
+	private ArrayList<Color> cleanUp;
+	private Color dGray, gray, lGray;
+	DungeonGame newGame;
 	
-	public static void main(String[] args) {
+	private Display display;
+	private Shell shell;
+	private Composite floor;
+	private Composite menu;
+	
+	public DungeonMain() {
+		newGame = new DungeonGame();
 		
-		final DungeonGame newGame = new DungeonGame();
 		cleanUp = new ArrayList<Color>(10);
 		
-		final Display display = new Display();
-		final Shell shell = new Shell(display);
+		display = new Display();
+		shell = new Shell(display);
 		shell.setText("Dungeon");
 		
 		makeColors(display);
@@ -43,7 +51,7 @@ public class DungeonMain {
 		shell.setLayout(layout);
 		
 		// Floor Initialization
-		final Composite floor = new Composite(shell, SWT.NONE);
+		floor = new Composite(shell, SWT.NONE);
 		floor.setBackground(lGray);
 		
 		data = new GridData();
@@ -53,7 +61,7 @@ public class DungeonMain {
 		floor.setLayoutData(data);
 		
 		// Menu Initialization
-		final Composite menu = new Composite(shell, SWT.NONE);
+		menu = new Composite(shell, SWT.NONE);
 		menu.setBackground(lGray);
 		data = new GridData();
 		data.horizontalAlignment = SWT.END;
@@ -125,16 +133,16 @@ public class DungeonMain {
 		shell.addKeyListener(new KeyListener() {
 			public void keyPressed(KeyEvent e) {
 				if(e.keyCode == 97) {
-					newGame.getFloor().desiredMove(Compass.WEST, newGame.getHero());
+					newGame.desiredMove(Compass.WEST, newGame.getHero());
 				}
 				else if(e.keyCode == 100) {
-					newGame.getFloor().desiredMove(Compass.EAST, newGame.getHero());
+					newGame.desiredMove(Compass.EAST, newGame.getHero());
 				}
 				else if(e.keyCode == 119) {
-					newGame.getFloor().desiredMove(Compass.NORTH, newGame.getHero());
+					newGame.desiredMove(Compass.NORTH, newGame.getHero());
 				}
 				else if(e.keyCode == 115) {
-					newGame.getFloor().desiredMove(Compass.SOUTH, newGame.getHero());
+					newGame.desiredMove(Compass.SOUTH, newGame.getHero());
 				}
 				else if(e.keyCode == 122) { // Z
 					System.out.println("attacking");
@@ -146,14 +154,8 @@ public class DungeonMain {
 				else if(e.keyCode == 99) { // C
 					System.out.println(e.keyCode);
 				}
-				
-				floor.redraw();
-				menu.redraw();
 			}
-			
-			public void keyReleased(KeyEvent e) {
-				// TODO Auto-generated method stub
-			}
+			public void keyReleased(KeyEvent e) {}
 		});
 
 		// Dispose Listener
@@ -165,6 +167,8 @@ public class DungeonMain {
 			}
 		});
 		
+		newGame.addObserver(this);
+		newGame.beginGame(display);
 		
 		shell.pack();
 		shell.open();
@@ -172,11 +176,10 @@ public class DungeonMain {
 		while (!shell.isDisposed()) {
 			if (!display.readAndDispatch()) display.sleep();
 		}
-		newGame.getThread().killProc();
 		display.dispose();
 	}
 	
-	public static void makeColors(Display display) {
+	public void makeColors(Display display) {
 		dGray = new Color(display, 30, 30, 30);
 		gray = new Color(display, 150, 150, 150);
 		lGray = new Color(display, 200, 200, 200);
@@ -185,4 +188,16 @@ public class DungeonMain {
 		cleanUp.add(gray);
 		cleanUp.add(lGray);
 	}
+	
+	@Override
+	public void update(Observable obs, Object obj) {
+		floor.redraw();
+		menu.redraw();
+	}
+	
+	
+	public static void main(String[] args) {
+		new DungeonMain();
+	}
+	
 }

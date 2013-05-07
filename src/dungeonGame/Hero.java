@@ -1,4 +1,4 @@
-package DungeonPack;
+package dungeonGame;
 
 // Unique object for each game, spans more than a single floor
 public class Hero extends AnimateObject {

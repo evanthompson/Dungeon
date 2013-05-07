@@ -1,11 +1,13 @@
-package DungeonPack;
+package dungeonGame;
 
 import java.util.Observable;
 
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.widgets.Display;
 
-import DungeonPack.DungeonMain.Compass;
+import dungeonGame.DungeonMain.Compass;
+
 
 public class DungeonGame extends Observable {
 	/* 
@@ -29,6 +31,8 @@ public class DungeonGame extends Observable {
 	private Hero hero;
 	private DungeonFloor level;
 	private GameThread mobThread;
+	private Runnable runnable;
+	private boolean running = true;
 	
 	public DungeonGame() {
 		
@@ -49,21 +53,31 @@ public class DungeonGame extends Observable {
 		hero = level.getHero();
 		
 		// Thread Generation
-		mobThread = new GameThread(level);
+		//mobThread = new GameThread(this);
+		
+		
 	}
 	
-	public void beginGame() {
-		// TODO : redundant until start menu is created
+	public void beginGame(final Display display) {
+		runnable = new Runnable() {
+			public void run() {
+				for(Mob m : getFloor().getEnemies()) {
+					desiredMove(Compass.values()[(int) (Math.random() * 3)], m);
+				}
+				display.timerExec(1000, runnable);
+			}
+		};
 		
-		//updateGame();
+		display.timerExec(1000, runnable);
 	}
 	
 	public void updateGame() {
-		
+		setChanged();
+		notifyObservers();
 	}
 	
 	// TODO: Method is currently redundant. Moved down to DungeonFloor
-	public void desiredMove(Compass direction, AnimateObject mover) {
+	public synchronized void desiredMove(Compass direction, AnimateObject mover) {
 		switch(direction) {
 			case WEST:	level.moveWest(mover);	break;
 			case EAST:	level.moveEast(mover);	break;
@@ -71,26 +85,7 @@ public class DungeonGame extends Observable {
 			case SOUTH:	level.moveSouth(mover);	break;
 			default: System.out.println("invalid direction..");
 		}
-	}
-	
-	
-	// TODO: Method is currently redundant.
-	public boolean checkMove(int newY, int newX) {
-		int unit = DungeonFloor.UNIT_SIZE;
-		Point topLeft = new Point(newX, newY);
-		Point topRight = new Point(newX + unit, newY);
-		Point bottomLeft = new Point(newX, newY + unit);
-		Point bottomRight = new Point(newX + unit, newY + unit);
-		
-		for(GameObject g : level.getObjects()) {
-			Rectangle area = new Rectangle(g.getXpos(), g.getYpos(), unit, unit);
-			if(area.contains(bottomRight) || area.contains(bottomLeft) ||
-					area.contains(topRight) || area.contains(topLeft)) {
-				System.out.println("Collision Detected..");
-				return false;
-			}
-		}
-		return true;
+		updateGame();
 	}
 	
 	public void attack() {

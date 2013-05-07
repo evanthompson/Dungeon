@@ -1,8 +1,9 @@
-package DungeonPack;
+package dungeonGame;
 
 import java.util.ArrayList;
 
-import DungeonPack.DungeonMain.Compass;
+import dungeonGame.DungeonMain.Compass;
+
 
 // Contains floor related information, including:
 // dimensions of map, rock and mob lists
@@ -88,16 +89,6 @@ public class DungeonFloor {
 			}
 			*/
 			
-		}
-	}
-	
-	public void desiredMove(Compass direction, AnimateObject mover) {
-		switch(direction) {
-			case WEST:	moveWest(mover);	break;
-			case EAST:	moveEast(mover);	break;
-			case NORTH:	moveNorth(mover);	break;
-			case SOUTH:	moveSouth(mover);	break;
-			default: System.out.println("invalid direction..");
 		}
 	}
 	

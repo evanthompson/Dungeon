@@ -1,4 +1,4 @@
-package DungeonPack;
+package dungeonGame;
 
 // Mob class: things the hero kills for experience and loot
 public class Mob extends AnimateObject {
