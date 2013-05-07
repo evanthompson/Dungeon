@@ -1,11 +1,6 @@
 package dungeonGame;
 
 import java.util.Observable;
-
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.widgets.Display;
-
 import dungeonGame.DungeonMain.Compass;
 
 
@@ -30,9 +25,6 @@ public class DungeonGame extends Observable {
 	
 	private Hero hero;
 	private DungeonFloor level;
-	private GameThread mobThread;
-	private Runnable runnable;
-	private boolean running = true;
 	
 	public DungeonGame() {
 		
@@ -58,17 +50,8 @@ public class DungeonGame extends Observable {
 		
 	}
 	
-	public void beginGame(final Display display) {
-		runnable = new Runnable() {
-			public void run() {
-				for(Mob m : getFloor().getEnemies()) {
-					desiredMove(Compass.values()[(int) (Math.random() * 3)], m);
-				}
-				display.timerExec(1000, runnable);
-			}
-		};
+	public void beginGame() {
 		
-		display.timerExec(1000, runnable);
 	}
 	
 	public void updateGame() {
@@ -95,5 +78,4 @@ public class DungeonGame extends Observable {
 	// Get Methods
 	public Hero getHero() { return hero; }
 	public DungeonFloor getFloor() { return level; }
-	public GameThread getThread() { return mobThread; }
 }

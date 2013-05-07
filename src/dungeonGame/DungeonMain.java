@@ -31,9 +31,11 @@ public class DungeonMain implements Observer {
 	private Shell shell;
 	private Composite floor;
 	private Composite menu;
+	private Runnable runnable;
 	
 	public DungeonMain() {
 		newGame = new DungeonGame();
+		newGame.addObserver(this);
 		
 		cleanUp = new ArrayList<Color>(10);
 		
@@ -167,8 +169,8 @@ public class DungeonMain implements Observer {
 			}
 		});
 		
-		newGame.addObserver(this);
-		newGame.beginGame(display);
+		//newGame.beginGame(display);
+		beginGame();
 		
 		shell.pack();
 		shell.open();
@@ -195,6 +197,20 @@ public class DungeonMain implements Observer {
 		menu.redraw();
 	}
 	
+	// TODO : At the moment, I dont like passing Display to the Model
+	// So I am putting the method here instead. This will fit better
+	// within a Controller later.
+	public void beginGame() {
+		runnable = new Runnable() {
+			public void run() {
+				for(Mob m : newGame.getFloor().getEnemies()) {
+					newGame.desiredMove(Compass.values()[(int) (Math.random() * 3)], m);
+				}
+				display.timerExec(1000, runnable);
+			}
+		};
+		display.timerExec(1000, runnable);
+	}
 	
 	public static void main(String[] args) {
 		new DungeonMain();
