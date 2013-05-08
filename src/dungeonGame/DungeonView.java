@@ -135,7 +135,6 @@ public class DungeonView implements Observer {
 			}
 		});
 		
-		newGame.beginGame();
 		/*
 		shell.pack();
 		shell.open();

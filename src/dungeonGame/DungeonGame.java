@@ -1,7 +1,6 @@
 package dungeonGame;
 
 import java.util.Observable;
-import org.eclipse.swt.widgets.Display;
 
 public class DungeonGame extends Observable {
 	/* 
@@ -24,7 +23,6 @@ public class DungeonGame extends Observable {
 	public enum Compass { NORTH, SOUTH, EAST, WEST }
 	private Hero hero;
 	private DungeonFloor level;
-	private Runnable runnable;
 	
 	public DungeonGame() {
 		
@@ -45,24 +43,14 @@ public class DungeonGame extends Observable {
 		hero = level.getHero();
 	}
 	
-	public void beginGame() {
-		runnable = new Runnable() {
-			public void run() {
-				for(Mob m : getFloor().getEnemies()) {
-					desiredMove(Compass.values()[(int) (Math.random() * 3)], m);
-				}
-				Display.getDefault().timerExec(1000, runnable);
-			}
-		};
-		Display.getDefault().timerExec(1000, runnable);
-	}
+	public void beginGame() {}
 	
 	public void updateGame() {
 		setChanged();
 		notifyObservers();
 	}
 	
-	public synchronized void desiredMove(Compass direction, AnimateObject mover) {
+	public void desiredMove(Compass direction, AnimateObject mover) {
 		switch(direction) {
 			case WEST:	level.moveWest(mover);	break;
 			case EAST:	level.moveEast(mover);	break;
