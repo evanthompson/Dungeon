@@ -1,9 +1,7 @@
 package dungeonGame;
 
 import java.util.ArrayList;
-
-import dungeonGame.DungeonMain.Compass;
-
+import dungeonGame.DungeonGame.Compass;
 
 // Contains floor related information, including:
 // dimensions of map, rock and mob lists

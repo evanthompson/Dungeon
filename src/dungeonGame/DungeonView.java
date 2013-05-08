@@ -7,6 +7,7 @@ import java.util.Observer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.Color;
@@ -14,23 +15,32 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
+
+import dungeonGame.DungeonGame.Compass;
 
 public class DungeonView implements Observer {
 	private ArrayList<Color> cleanUp;
 	private Color dGray, gray, lGray;
+	DungeonGame newGame;
 	
 	private Display display;
 	private Shell shell;
 	private Composite floor;
 	private Composite menu;
 	
-	public DungeonView() {
+	public DungeonView(Shell shell) {
+		newGame = new DungeonGame();
+		newGame.addObserver(this);
+		
 		cleanUp = new ArrayList<Color>(10);
 		
-		display = new Display();
-		shell = new Shell(display);
-		shell.setText("Dungeon");
+		this.shell = shell;
+		//display = new Display();
+		//shell = new Shell(display);
+		//shell.setText("Dungeon");
 		
 		makeColors(display);
 		
@@ -62,16 +72,95 @@ public class DungeonView implements Observer {
 		data.widthHint = 200;
 		menu.setLayoutData(data);
 		
-		/** Currently, might be covered by the other PaintEvent
+		// Paint Listener ///////////
+		floor.addListener(SWT.Paint, new Listener () {
+			public void handleEvent(Event event) {
+				ArrayList<GameObject> objects = newGame.getFloor().getObjects();
+				int unit = DungeonFloor.UNIT_SIZE;
+				for(GameObject obj : objects) {
+					String life = "";
+					if(obj instanceof Mob) {
+						event.gc.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_DARK_RED));
+						event.gc.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_WHITE));
+						life = ((Mob) obj).getCurrHealth() + " / " + ((Mob) obj).getMaxHealth();
+					}
+					else if(obj instanceof InanimateObject) {
+						event.gc.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_BLACK));
+						life = "*";
+					} else {
+						event.gc.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_YELLOW));
+					}
+					event.gc.fillRectangle(obj.getXpos(), obj.getYpos(), unit, unit);
+					event.gc.drawText(life, obj.getXpos() + 5, obj.getYpos() + 5);
+				}
+				
+				Hero hero = newGame.getHero();
+				event.gc.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_BLUE));
+				event.gc.fillRectangle(hero.getXpos(), hero.getYpos(), unit, unit);
+				
+				
+				int width = unit / 4;
+				int x, y;
+				
+				switch(hero.getDirection()) {
+				case NORTH:	x = (int)(hero.getXpos() + (unit / 2) - (width / 2));
+							y = hero.getYpos();
+							break;
+				case SOUTH:	x = (int)(hero.getXpos() + (unit / 2) - (width / 2));
+							y = hero.getYpos() + unit - width;
+							break;
+				case WEST:	x = hero.getXpos();
+							y = (int)(hero.getYpos() + (unit / 2) - (width / 2));
+							break;
+				case EAST:	x = hero.getXpos() + unit - width;
+							y = (int)(hero.getYpos() + (unit / 2) - (width / 2));
+							break;
+				default:	x = y = 0; break;
+				}
+				
+				event.gc.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_YELLOW));
+				event.gc.fillOval(x, y, width, width);
+				
+				event.gc.dispose();
+			}
+		});
+		
 		menu.addListener(SWT.Paint, new Listener () {
 			public void handleEvent (Event event) {
 				Hero hero = newGame.getHero();
 				event.gc.drawText(hero.getXpos() + "," + hero.getYpos(), 10, 10);
 			}
 		});
-		**/
 		
-		
+		// Key Listener ////////////
+		/*shell.addKeyListener(new KeyListener() {
+			public void keyPressed(KeyEvent e) {
+				if(e.keyCode == 97) {
+					newGame.desiredMove(Compass.WEST, (AnimateObject) newGame.getHero());
+				}
+				else if(e.keyCode == 100) {
+					newGame.desiredMove(Compass.EAST, newGame.getHero());
+				}
+				else if(e.keyCode == 119) {
+					newGame.desiredMove(Compass.NORTH, newGame.getHero());
+				}
+				else if(e.keyCode == 115) {
+					newGame.desiredMove(Compass.SOUTH, newGame.getHero());
+				}
+				else if(e.keyCode == 122) { // Z
+					System.out.println("attacking");
+					newGame.attack();
+				}
+				else if(e.keyCode == 120) { // X
+					System.out.println(e.keyCode);
+				}
+				else if(e.keyCode == 99) { // C
+					System.out.println(e.keyCode);
+				}
+			}
+			public void keyReleased(KeyEvent e) {}
+		});*/
+
 		// Dispose Listener
 		shell.addDisposeListener(new DisposeListener () {
 			public void widgetDisposed(DisposeEvent e) {
@@ -81,23 +170,17 @@ public class DungeonView implements Observer {
 			}
 		});
 		
+		newGame.beginGame();
+		/*
 		shell.pack();
 		shell.open();
 		
 		while (!shell.isDisposed()) {
 			if (!display.readAndDispatch()) display.sleep();
 		}
+		
 		display.dispose();
-	}
-	
-	@Override
-	public void update(Observable obs, Object game) {
-	}
-	
-	public void addController(DungeonController controller) {
-		//shell.addKeyListener((KeyListener) controller);
-		floor.addPaintListener((PaintListener) controller);
-		menu.addPaintListener((PaintListener) controller);
+		*/
 	}
 	
 	public void makeColors(Display display) {
@@ -110,6 +193,16 @@ public class DungeonView implements Observer {
 		cleanUp.add(lGray);
 	}
 	
-	public Display getDisplay() { return display; }
+	@Override
+	public void update(Observable obs, Object obj) {
+		floor.redraw();
+		menu.redraw();
+	}
+	
+	public void addController(DungeonController controller) {
+		shell.addKeyListener(controller);
+	}
+	
+	public DungeonGame getGame() { return newGame; }
 
 }

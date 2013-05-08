@@ -1,6 +1,6 @@
 package dungeonGame;
 
-import dungeonGame.DungeonMain.Compass;
+import dungeonGame.DungeonGame.Compass;
 
 public class AnimateObject extends GameObject {
 	private int maxHealth;

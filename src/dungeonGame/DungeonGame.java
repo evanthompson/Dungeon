@@ -1,8 +1,7 @@
 package dungeonGame;
 
 import java.util.Observable;
-import dungeonGame.DungeonMain.Compass;
-
+import org.eclipse.swt.widgets.Display;
 
 public class DungeonGame extends Observable {
 	/* 
@@ -22,9 +21,10 @@ public class DungeonGame extends Observable {
 				Each Floor must be remembered
 	 */
 	
-	
+	public enum Compass { NORTH, SOUTH, EAST, WEST }
 	private Hero hero;
 	private DungeonFloor level;
+	private Runnable runnable;
 	
 	public DungeonGame() {
 		
@@ -43,15 +43,18 @@ public class DungeonGame extends Observable {
 		
 		// Hero Generation
 		hero = level.getHero();
-		
-		// Thread Generation
-		//mobThread = new GameThread(this);
-		
-		
 	}
 	
 	public void beginGame() {
-		
+		runnable = new Runnable() {
+			public void run() {
+				for(Mob m : getFloor().getEnemies()) {
+					desiredMove(Compass.values()[(int) (Math.random() * 3)], m);
+				}
+				Display.getDefault().timerExec(1000, runnable);
+			}
+		};
+		Display.getDefault().timerExec(1000, runnable);
 	}
 	
 	public void updateGame() {
