@@ -26,17 +26,12 @@ public class DungeonView implements Observer {
 	private Composite floor;
 	private Composite menu;
 	
-	public DungeonView(Shell shell) {
+	public DungeonView(Shell s) {
 		newGame = new DungeonGame();
 		newGame.addObserver(this);
+		this.shell = s;
 		
 		cleanUp = new ArrayList<Color>(10);
-		
-		this.shell = shell;
-		//display = new Display();
-		//shell = new Shell(display);
-		//shell.setText("Dungeon");
-		
 		makeColors(display);
 		
 		GridLayout layout;
@@ -109,7 +104,7 @@ public class DungeonView implements Observer {
 				case EAST:	x = hero.getXpos() + unit - width;
 							y = (int)(hero.getYpos() + (unit / 2) - (width / 2));
 							break;
-				default:	x = y = 0; break;
+				default:	x = y = 0;
 				}
 				
 				event.gc.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_YELLOW));
@@ -135,16 +130,6 @@ public class DungeonView implements Observer {
 			}
 		});
 		
-		/*
-		shell.pack();
-		shell.open();
-		
-		while (!shell.isDisposed()) {
-			if (!display.readAndDispatch()) display.sleep();
-		}
-		
-		display.dispose();
-		*/
 	}
 	
 	public void makeColors(Display display) {

@@ -24,7 +24,7 @@ public class DungeonController implements KeyListener {
 	}
 
 	public void addView(DungeonView v) {
-		this.view = v;		
+		this.view = v;
 	}
 
 	public void startGame() {
@@ -45,29 +45,25 @@ public class DungeonController implements KeyListener {
 	
 	@Override
 	public void keyPressed(KeyEvent e) {
+		switch(e.keyCode) {
+		case 97:	game.desiredMove(Compass.WEST, game.getHero()); 
+					break;
+		case 100:	game.desiredMove(Compass.EAST, game.getHero());
+					break;
+		case 119:	game.desiredMove(Compass.NORTH, game.getHero());
+					break;
+		case 115:	game.desiredMove(Compass.SOUTH, game.getHero());
+					break;
+		case 122:	System.out.println("attacking");
+					game.attack();
+					break;
+		case 120:	System.out.println(e.keyCode);
+					break;
+		case 99:	System.out.println(e.keyCode);
+					break;
+		default:	System.out.println("not supported");
+		}
 		
-		if(e.keyCode == 97) {
-			game.desiredMove(Compass.WEST, game.getHero());
-		}
-		else if(e.keyCode == 100) {
-			game.desiredMove(Compass.EAST, game.getHero());
-		}
-		else if(e.keyCode == 119) {
-			game.desiredMove(Compass.NORTH, game.getHero());
-		}
-		else if(e.keyCode == 115) {
-			game.desiredMove(Compass.SOUTH, game.getHero());
-		}
-		else if(e.keyCode == 122) { // Z
-			System.out.println("attacking");
-			game.attack();
-		}
-		else if(e.keyCode == 120) { // X
-			System.out.println(e.keyCode);
-		}
-		else if(e.keyCode == 99) { // C
-			System.out.println(e.keyCode);
-		}
 	}
 	@Override
 	public void keyReleased(KeyEvent e) {}
