@@ -16,7 +16,7 @@ public class DungeonMVC {
 		
 		//game.addObserver(view); // inside DungeonView Constructor
 		
-		DungeonController controller = new DungeonController(shell);
+		DungeonController controller = new DungeonController();
 		controller.addModel(view.getGame());
 		controller.addView(view);
 		//game.updateGame(); // inside DungeonView Constructor

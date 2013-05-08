@@ -1,13 +1,7 @@
 package dungeonGame;
 
-import java.util.ArrayList;
-
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
-import org.eclipse.swt.events.PaintEvent;
-import org.eclipse.swt.events.PaintListener;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
 import dungeonGame.DungeonGame.Compass;
@@ -16,11 +10,8 @@ public class DungeonController implements KeyListener {
 
 	private DungeonGame game;
 	private DungeonView view;
-	private Shell shell;
 	
-	public DungeonController(Shell shell) {
-		this.shell = shell;
-	}	
+	public DungeonController() {}
 	
 	public void addModel(DungeonGame g) {
 		this.game = g;
