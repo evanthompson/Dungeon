@@ -62,7 +62,6 @@ public class DungeonGame extends Observable {
 		notifyObservers();
 	}
 	
-	// TODO: Method is currently redundant. Moved down to DungeonFloor
 	public synchronized void desiredMove(Compass direction, AnimateObject mover) {
 		switch(direction) {
 			case WEST:	level.moveWest(mover);	break;

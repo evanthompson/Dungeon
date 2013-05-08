@@ -23,8 +23,6 @@ import dungeonGame.DungeonGame.Compass;
 
 public class DungeonMain implements Observer {
 	
-	//public enum Compass { NORTH, SOUTH, EAST, WEST }
-	
 	private ArrayList<Color> cleanUp;
 	private Color dGray, gray, lGray;
 	DungeonGame newGame;
@@ -180,7 +178,6 @@ public class DungeonMain implements Observer {
 		while (!shell.isDisposed()) {
 			if (!display.readAndDispatch()) display.sleep();
 		}
-		
 		display.dispose();
 	}
 	

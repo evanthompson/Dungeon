@@ -7,9 +7,6 @@ import java.util.Observer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
-import org.eclipse.swt.events.KeyEvent;
-import org.eclipse.swt.events.KeyListener;
-import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -18,8 +15,6 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
-
-import dungeonGame.DungeonGame.Compass;
 
 public class DungeonView implements Observer {
 	private ArrayList<Color> cleanUp;
@@ -98,7 +93,6 @@ public class DungeonView implements Observer {
 				event.gc.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_BLUE));
 				event.gc.fillRectangle(hero.getXpos(), hero.getYpos(), unit, unit);
 				
-				
 				int width = unit / 4;
 				int x, y;
 				
@@ -132,35 +126,6 @@ public class DungeonView implements Observer {
 			}
 		});
 		
-		// Key Listener ////////////
-		/*shell.addKeyListener(new KeyListener() {
-			public void keyPressed(KeyEvent e) {
-				if(e.keyCode == 97) {
-					newGame.desiredMove(Compass.WEST, (AnimateObject) newGame.getHero());
-				}
-				else if(e.keyCode == 100) {
-					newGame.desiredMove(Compass.EAST, newGame.getHero());
-				}
-				else if(e.keyCode == 119) {
-					newGame.desiredMove(Compass.NORTH, newGame.getHero());
-				}
-				else if(e.keyCode == 115) {
-					newGame.desiredMove(Compass.SOUTH, newGame.getHero());
-				}
-				else if(e.keyCode == 122) { // Z
-					System.out.println("attacking");
-					newGame.attack();
-				}
-				else if(e.keyCode == 120) { // X
-					System.out.println(e.keyCode);
-				}
-				else if(e.keyCode == 99) { // C
-					System.out.println(e.keyCode);
-				}
-			}
-			public void keyReleased(KeyEvent e) {}
-		});*/
-
 		// Dispose Listener
 		shell.addDisposeListener(new DisposeListener () {
 			public void widgetDisposed(DisposeEvent e) {
