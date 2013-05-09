@@ -41,7 +41,7 @@ public class DungeonFloor {
 			do {
 				randomY = Math.min((int)(Math.random() * multiplier) * UNIT_SIZE, MAP_HEIGHT - UNIT_SIZE);
 				randomX = Math.min((int)(Math.random() * multiplier) * UNIT_SIZE, MAP_WIDTH - UNIT_SIZE);
-				if(overlapAt(new Point(randomY, randomX)) == false) {
+				if(!anyOverlapAt(new Point(randomX, randomY))) {
 					break;
 				}
 				count++;
@@ -157,8 +157,16 @@ public class DungeonFloor {
 		mover.setDirection(Compass.SOUTH);
 	}
 	
+	public boolean overlapAt(GameObject obj, Point p) {
+		Rectangle rect = new Rectangle(obj.getXpos(), obj.getYpos(), UNIT_SIZE, UNIT_SIZE);
+		if(rect.contains(p)) {
+			return true;
+		}
+		return false;
+	}
+	
 	// Runs the Point p against all object, checking for overlap
-	public boolean overlapAt(Point p) {
+	public boolean anyOverlapAt(Point p) {
 		Rectangle rect;
 		for(GameObject obj : objects) {
 			rect = new Rectangle(obj.getXpos(), obj.getYpos(), UNIT_SIZE, UNIT_SIZE);
@@ -175,10 +183,10 @@ public class DungeonFloor {
 	public void removeObject(GameObject waste) {
 		for(GameObject w : objects) {
 			if(waste.equals(w)) {
-				System.out.println("Object: " + waste.toString() + " is being removed..");
-				if(objects.remove(w)) { System.out.println("Object removed from 'objects'"); }
+				System.out.println(waste.getClass().getSimpleName() + " is being removed..");
 				if(enemies.remove(w)) { System.out.println("Object removed from 'enemies'"); }
 				if(rocks.remove(w)) { System.out.println("Object removed from 'rocks'"); }
+				if(objects.remove(w)) { System.out.println("Object removed from 'objects'"); }
 			}
 		}
 	}

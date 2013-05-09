@@ -1,5 +1,6 @@
 package dungeonGame;
 
+import java.util.ArrayList;
 import java.util.Observable;
 
 public class DungeonGame extends Observable {
@@ -62,7 +63,23 @@ public class DungeonGame extends Observable {
 	}
 	
 	public void attack() {
-		
+		ArrayList<Mob> targets = new ArrayList<Mob>();
+		for(Mob m : level.getEnemies()) {
+			if(level.overlapAt(m, hero.getCrosshair())) {
+				targets.add(m);
+			}
+		}
+		for(Mob m : targets) {
+			m.damage(hero.getStrength() * 10);
+			System.out.println("Hero hit " + m.getClass().getSimpleName() + " for " + hero.getStrength() * 10);
+			if(m.getCurrHealth() <= 0) {
+				System.out.println("hero got " + m.getBooty() + " gil and " + m.getExperience() + " experience.");
+				hero.addBooty(m.getBooty());
+				hero.addExp(m.getExperience());
+				level.removeObject(m);
+			}
+		}
+		updateGame();
 	}
 	
 	// Get Methods

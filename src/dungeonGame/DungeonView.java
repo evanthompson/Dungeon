@@ -89,26 +89,8 @@ public class DungeonView implements Observer {
 				event.gc.fillRectangle(hero.getXpos(), hero.getYpos(), unit, unit);
 				
 				int width = unit / 4;
-				int x, y;
-				
-				switch(hero.getDirection()) {
-				case NORTH:	x = (int)(hero.getXpos() + (unit / 2) - (width / 2));
-							y = hero.getYpos();
-							break;
-				case SOUTH:	x = (int)(hero.getXpos() + (unit / 2) - (width / 2));
-							y = hero.getYpos() + unit - width;
-							break;
-				case WEST:	x = hero.getXpos();
-							y = (int)(hero.getYpos() + (unit / 2) - (width / 2));
-							break;
-				case EAST:	x = hero.getXpos() + unit - width;
-							y = (int)(hero.getYpos() + (unit / 2) - (width / 2));
-							break;
-				default:	x = y = 0;
-				}
-				
 				event.gc.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_YELLOW));
-				event.gc.fillOval(x, y, width, width);
+				event.gc.fillOval(hero.getCrosshair().x - (width / 2), hero.getCrosshair().y  - (width / 2), width, width);
 				
 				event.gc.dispose();
 			}
@@ -118,6 +100,8 @@ public class DungeonView implements Observer {
 			public void handleEvent (Event event) {
 				Hero hero = newGame.getHero();
 				event.gc.drawText(hero.getXpos() + "," + hero.getYpos(), 10, 10);
+				event.gc.drawText("Experience: " + hero.getExperience(), 10, 30);
+				event.gc.drawText("Money: " + hero.getBooty(), 10, 50);
 			}
 		});
 		

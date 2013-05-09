@@ -4,6 +4,7 @@ package dungeonGame;
 public abstract class GameObject {
 	private int xpos;
 	private int ypos;
+	protected static final int SIZE = 50;
 	
 	public GameObject() {
 		setXpos(0);

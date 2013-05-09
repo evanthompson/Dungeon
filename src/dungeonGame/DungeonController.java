@@ -54,8 +54,7 @@ public class DungeonController implements KeyListener {
 					break;
 		case 115:	game.desiredMove(Compass.SOUTH, game.getHero());
 					break;
-		case 122:	System.out.println("attacking");
-					game.attack();
+		case 122:	game.attack();
 					break;
 		case 120:	System.out.println(e.keyCode);
 					break;
