@@ -7,12 +7,14 @@ public class AnimateObject extends GameObject {
 	private int currHealth;
 	private int strength;
 	private Compass direction;
+	private int stride;
 	
 	// Constructor
 	public AnimateObject() {
 		super(0, 0);
 		maxHealth = currHealth = 1;
 		strength = 0;
+		stride = 10;
 		initDirection();
 	}
 	
@@ -20,6 +22,7 @@ public class AnimateObject extends GameObject {
 		super(x, y);
 		maxHealth = currHealth = h;
 		strength = 1;
+		stride = 10;
 		initDirection();
 	}
 	
@@ -64,10 +67,12 @@ public class AnimateObject extends GameObject {
 	public void setMaxHealth(int h) { maxHealth = h; }
 	public void setCurrHealth(int h) { currHealth = h; }
 	public void setStrength(int s) { strength = s; }
+	public void setStride(int s) { stride = s; }
 	
 	// Get Methods
 	public Compass getDirection() { return direction; }
 	public int getMaxHealth() { return maxHealth; }
 	public int getCurrHealth() { return currHealth; }
 	public int getStrength() { return strength;	}
+	public int getStride() { return stride;	}
 }
