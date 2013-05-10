@@ -8,10 +8,10 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.RGB;
+import org.eclipse.swt.graphics.Resource;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Canvas;
@@ -21,9 +21,9 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 
 public class DungeonView implements Observer {
-	private ArrayList<Color> cleanUp;
+	private ArrayList<Resource> cleanUp;
 	private Color dGray, gray, lGray;
-	private Image rock, scaledRock, goo, scaledGoo, hero, scaledHero, floorTexture;
+	private Image rock, goo, hero, stairsUp, stairsDown, floorTexture;
 	private DungeonGame newGame;
 	
 	private Shell shell;
@@ -35,7 +35,7 @@ public class DungeonView implements Observer {
 		newGame.addObserver(this);
 		this.shell = s;
 		
-		cleanUp = new ArrayList<Color>(10);
+		cleanUp = new ArrayList<Resource>(10);
 		makeColors();
 		createImages();
 		
@@ -78,28 +78,34 @@ public class DungeonView implements Observer {
 				for(GameObject obj : objects) {
 					String life = "";
 					if(obj instanceof Mob) {
-						event.gc.drawImage(scaledGoo, obj.getXpos(), obj.getYpos());
+						event.gc.drawImage(goo, obj.getXpos(), obj.getYpos());
 						life = ((Mob) obj).getCurrHealth() + " / " + ((Mob) obj).getMaxHealth();
 						event.gc.setForeground(event.display.getSystemColor(SWT.COLOR_WHITE));
 						event.gc.drawText(life, obj.getXpos() + 5, obj.getYpos() + 5, true);
 					}
 					else if(obj instanceof Obstacle) {
-						event.gc.drawImage(scaledRock, obj.getXpos(), obj.getYpos());
+						event.gc.drawImage(rock, obj.getXpos(), obj.getYpos());
 						life = "";
-					} else if(!(obj instanceof Hero)) {
+					} 
+					else if(obj instanceof Stair) {
+						if(((Stair) obj).getDescent() == true) {
+							event.gc.drawImage(stairsDown, obj.getXpos(), obj.getYpos());
+						} else { event.gc.drawImage(stairsUp, obj.getXpos(), obj.getYpos()); }
+					}
+					else if(!(obj instanceof Hero)) {
 						event.gc.setBackground(event.display.getSystemColor(SWT.COLOR_YELLOW));
 						event.gc.fillRectangle(obj.getXpos(), obj.getYpos(), unit, unit);
 					}
 				}
 				
 				// Drawing Hero
-				Hero hero = newGame.getHero();
-				event.gc.drawImage(scaledHero, hero.getXpos(), hero.getYpos());
+				Hero heroObj = newGame.getHero();
+				event.gc.drawImage(hero, heroObj.getXpos(), heroObj.getYpos());
 				
 				// Drawing Hero range indicator
 				int width = unit / 4;
 				event.gc.setBackground(event.display.getSystemColor(SWT.COLOR_YELLOW));
-				event.gc.fillOval(hero.getCrosshair().x - (width / 2), hero.getCrosshair().y  - (width / 2), width, width);
+				event.gc.fillOval(heroObj.getCrosshair().x - (width / 2), heroObj.getCrosshair().y  - (width / 2), width, width);
 				
 			}
 		});
@@ -116,45 +122,54 @@ public class DungeonView implements Observer {
 		// Dispose Listener
 		shell.addDisposeListener(new DisposeListener () {
 			public void widgetDisposed(DisposeEvent e) {
-				for(Color c : cleanUp) {
+				for(Resource c : cleanUp) {
 					c.dispose();
 				}
-				//floorTexture.dispose();
-				rock.dispose();
-				scaledRock.dispose();
 			}
 		});
 		
 	}
 	
 	public void makeColors() {
-		dGray = new Color(shell.getDisplay(), 30, 30, 30);
-		gray = new Color(shell.getDisplay(), 150, 150, 150);
-		lGray = new Color(shell.getDisplay(), 200, 200, 200);
-		
-		cleanUp.add(dGray);
-		cleanUp.add(gray);
-		cleanUp.add(lGray);
+		addResource(dGray = new Color(shell.getDisplay(), 30, 30, 30));
+		addResource(gray = new Color(shell.getDisplay(), 150, 150, 150));
+		addResource(lGray = new Color(shell.getDisplay(), 200, 200, 200));
 	}
 	
 	public void createImages() {
-		rock = new Image(shell.getDisplay(), getClass().getResourceAsStream("images/rock_base.png"));
+		rock = new Image(shell.getDisplay(), getClass().getResourceAsStream("images/rock_base_2.png"));
 		ImageData rockData = rock.getImageData();
 		RGB rockRgb = rockData.palette.getRGB(rockData.getPixel(0, 0));
 		rockData.transparentPixel = rockData.palette.getPixel(rockRgb);
-		scaledRock = new Image(shell.getDisplay(), rockData.scaledTo(50,50));
+		addResource(rock = new Image(shell.getDisplay(), rockData.scaledTo(50,50)));
 		
 		goo = new Image(shell.getDisplay(), getClass().getResourceAsStream("images/goo_1_1.png"));
 		ImageData gooData = goo.getImageData();
 		RGB gooRgb = gooData.palette.getRGB(gooData.getPixel(0, 0));
 		gooData.transparentPixel = gooData.palette.getPixel(gooRgb);
-		scaledGoo = new Image(shell.getDisplay(), gooData.scaledTo(50,50));
+		addResource(goo = new Image(shell.getDisplay(), gooData.scaledTo(50,50)));
 		
 		hero = new Image(shell.getDisplay(), getClass().getResourceAsStream("images/hero_1.png"));
 		ImageData heroData = hero.getImageData();
 		RGB heroRgb = rockData.palette.getRGB(heroData.getPixel(0, 0));
 		heroData.transparentPixel = rockData.palette.getPixel(heroRgb);
-		scaledHero = new Image(shell.getDisplay(), heroData.scaledTo(50,50));
+		addResource(hero = new Image(shell.getDisplay(), heroData.scaledTo(50,50)));
+		
+		stairsUp = new Image(shell.getDisplay(), getClass().getResourceAsStream("images/stair_up.png"));
+		ImageData stairsUpData = stairsUp.getImageData();
+		RGB stairsUpRgb = stairsUpData.palette.getRGB(stairsUpData.getPixel(0, 0));
+		stairsUpData.transparentPixel = stairsUpData.palette.getPixel(stairsUpRgb);
+		addResource(stairsUp = new Image(shell.getDisplay(), stairsUpData.scaledTo(50,50)));
+		
+		stairsDown = new Image(shell.getDisplay(), getClass().getResourceAsStream("images/stairs_down.png"));
+		ImageData stairsDownData = stairsDown.getImageData();
+		RGB stairsDownRgb = stairsDownData.palette.getRGB(stairsDownData.getPixel(0, 0));
+		stairsDownData.transparentPixel = stairsDownData.palette.getPixel(stairsDownRgb);
+		addResource(stairsDown = new Image(shell.getDisplay(), stairsDownData.scaledTo(50,50)));
+	}
+	
+	public void addResource(Resource r) {
+		cleanUp.add(r);
 	}
 	
 	@Override

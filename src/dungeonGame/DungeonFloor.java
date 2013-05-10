@@ -14,79 +14,83 @@ public class DungeonFloor {
 	private ArrayList<GameObject> objects; // keeps track of all 'units' on THIS floor
 	private ArrayList<Obstacle> rocks;
 	private ArrayList<Mob> enemies;
-	private Hero hero;
+	private ArrayList<Stair> stairs;
 	
 	// Constructor - initiate lists and place objects
 	public DungeonFloor() {
 		objects = new ArrayList<GameObject>(20);
 		rocks = new ArrayList<Obstacle>();
 		enemies = new ArrayList<Mob>();
+		stairs = new ArrayList<Stair>(5);
 		
-		//place(Stair.class, 2);
-		place(Obstacle.class, 6);
-		place(Mob.class, 2);
+		placeObjects(Stair.class, 2);
+		stairs.get(0).setDescent(true);
+		stairs.get(1).setDescent(false);
+		
+		placeObjects(Obstacle.class, 6);
+		placeObjects(Mob.class, 2);
 	}
 	
-	// Creates multiple objects of a certain type and places them
-	// randomly within the bounds of the board.
-	public void place(Class<? extends GameObject> objectType, int amount) {
-		int randomY, randomX;
-		int multiplier = (int)(MAP_HEIGHT / UNIT_SIZE);
+	public void placeObjects(Class<? extends GameObject> objectType, int amount) {
 		
+		Point newPoint;
 		for(int i = 0; i < amount; i++) {
-			
-			int count = 0;
-			do {
-				randomY = Math.min((int)(Math.random() * multiplier) * UNIT_SIZE, MAP_HEIGHT - UNIT_SIZE);
-				randomX = Math.min((int)(Math.random() * multiplier) * UNIT_SIZE, MAP_WIDTH - UNIT_SIZE);
-				if(!anyOverlapAt(new Point(randomX, randomY))) {
-					break;
-				}
-				count++;
-			} while(count < 15);
+			newPoint = findFreePoint();
+			if(newPoint == null) {
+				System.out.println("findFreePoint returned null..");
+				return;
+			}
 			
 			GameObject newObject;
-			if(objectType == Obstacle.class) {
-				newObject = new Obstacle(randomX, randomY);
-				rocks.add((Obstacle) newObject);
-				objects.add(newObject);
-			}
-			else if(objectType == Mob.class) {
-				newObject = new Mob(randomX, randomY, 50);
-				enemies.add((Mob) newObject);
-				objects.add(newObject);
-			}
-			else if(objectType == Hero.class) {
-				newObject = new Hero(randomX, randomY);
-				objects.add(newObject);
-				hero = (Hero) newObject;
-			}
-			else { System.out.println("Invalid gameObject type passed to DungeonFloor.place(...)"); }
-			
-			/*** Alternate implementation for initialization of dynamic types ***
 			try {
 				newObject = (GameObject) Class.forName(objectType.getName()).newInstance();
-				System.out.println("created new GameObject of Type: " + newObject.getClass().getSimpleName());
-				newObject.setXpos(randomX);
-				newObject.setYpos(randomY);
-				objects.add(newObject);
-				
-				if(newObject instanceof Mob) {
-					enemies.add((Mob) newObject);
-				}
-				if(newObject instanceof Obstacle) {
-					rocks.add((Obstacle) newObject);
-				}
+				newObject.setXpos(newPoint.x);
+				newObject.setYpos(newPoint.y);
+				organizeObject(newObject);
 				
 			} catch (InstantiationException e) {
-				System.out.println("exception 1 " + e);
+				System.out.println("InstantiationException");
 			} catch (IllegalAccessException e) {
-				System.out.println("exception 2 " + e);
+				System.out.println("IllegalAccessException");
 			} catch (ClassNotFoundException e) {
-				System.out.println("exception 3 " + e);
+				System.out.println("ClassNotFoundException");
 			}
-			*/
+		}
+		
+	}
+	
+	// If successful, returns a Point. Otherwise, returns null.
+	public Point findFreePoint() {
+		int randomY, randomX;
+		int multiplier = (int)(MAP_HEIGHT / UNIT_SIZE);
+
+		int count = 0;
+		while(count < 15) {
 			
+			randomY = Math.min((int)(Math.random() * multiplier) * UNIT_SIZE, MAP_HEIGHT - UNIT_SIZE);
+			randomX = Math.min((int)(Math.random() * multiplier) * UNIT_SIZE, MAP_WIDTH - UNIT_SIZE);
+			if(!anyOverlapAt(new Point(randomX, randomY))) {
+				return new Point(randomX, randomY);
+			}
+			count++;
+		}
+		return null;
+	}
+	
+	// Adds the given object to all relevant lists
+	public void organizeObject(GameObject obj) {
+		objects.add(obj);
+		
+		if(obj instanceof Mob) {
+			enemies.add((Mob) obj);
+		}
+		
+		if(obj instanceof Obstacle) {
+			rocks.add((Obstacle) obj);
+		}
+		
+		if(obj instanceof Stair) {
+			stairs.add((Stair) obj);
 		}
 	}
 		
@@ -129,7 +133,6 @@ public class DungeonFloor {
 	public ArrayList<Obstacle> getRocks() { return rocks; }
 	public ArrayList<Mob> getEnemies() { return enemies; }
 	public ArrayList<GameObject> getObjects() { return objects; }
-	public Hero getHero() { return hero; }
 	public int getMapHeight() { return MAP_HEIGHT; }
 	public int getMapWidth() { return MAP_WIDTH; }
 	

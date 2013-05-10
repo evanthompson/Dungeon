@@ -4,9 +4,9 @@ public class Stair extends Pathable {
 
 	private boolean descent;
 	
-	public Stair(boolean goDown) {
+	public Stair() {
 		super();
-		this.descent = goDown;
+		this.descent = true;
 	}
 	public Stair(int x, int y, boolean goDown) {
 		super(x, y);

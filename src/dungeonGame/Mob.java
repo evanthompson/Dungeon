@@ -6,7 +6,7 @@ public class Mob extends AnimateObject {
 	private int booty;
 	
 	public Mob() {
-		super(0, 0, 1);
+		super(0, 0, 50);
 		setExperience((int)(Math.random()*100));
 		setBooty((int)(Math.random()*100));
 	}

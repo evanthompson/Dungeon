@@ -32,10 +32,15 @@ public class DungeonGame extends Observable {
 		dungeon = new ArrayList<DungeonFloor>();
 		dungeon.add(new DungeonFloor());
 		level = dungeon.get(0);
-		level.place(Hero.class, 1);
 		
 		// Hero Generation
-		hero = level.getHero();
+		Point heroStart = level.findFreePoint();
+		if(heroStart != null) {
+			hero = new Hero(heroStart.x, heroStart.y);
+			hero.setMaxHealth(100);
+			hero.setCurrHealth(100);
+			level.organizeObject(hero);
+		}
 	}
 	
 	public void beginGame() {}
