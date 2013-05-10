@@ -8,6 +8,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.RGB;
@@ -22,7 +23,7 @@ import org.eclipse.swt.widgets.Shell;
 public class DungeonView implements Observer {
 	private ArrayList<Color> cleanUp;
 	private Color dGray, gray, lGray;
-	private Image rock, scaledRock, floorTexture;
+	private Image rock, scaledRock, goo, scaledGoo, hero, scaledHero, floorTexture;
 	private DungeonGame newGame;
 	
 	private Shell shell;
@@ -77,26 +78,25 @@ public class DungeonView implements Observer {
 				for(GameObject obj : objects) {
 					String life = "";
 					if(obj instanceof Mob) {
-						event.gc.setBackground(event.display.getSystemColor(SWT.COLOR_DARK_RED));
-						event.gc.setForeground(event.display.getSystemColor(SWT.COLOR_WHITE));
+						event.gc.drawImage(scaledGoo, obj.getXpos(), obj.getYpos());
 						life = ((Mob) obj).getCurrHealth() + " / " + ((Mob) obj).getMaxHealth();
-						event.gc.fillRectangle(obj.getXpos(), obj.getYpos(), unit, unit);
+						event.gc.setForeground(event.display.getSystemColor(SWT.COLOR_WHITE));
+						event.gc.drawText(life, obj.getXpos() + 5, obj.getYpos() + 5, true);
 					}
-					else if(obj instanceof InanimateObject) {
-						//event.gc.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_BLACK));
+					else if(obj instanceof Obstacle) {
 						event.gc.drawImage(scaledRock, obj.getXpos(), obj.getYpos());
 						life = "";
-					} else {
+					} else if(!(obj instanceof Hero)) {
 						event.gc.setBackground(event.display.getSystemColor(SWT.COLOR_YELLOW));
 						event.gc.fillRectangle(obj.getXpos(), obj.getYpos(), unit, unit);
 					}
-					event.gc.drawText(life, obj.getXpos() + 5, obj.getYpos() + 5);
 				}
 				
+				// Drawing Hero
 				Hero hero = newGame.getHero();
-				event.gc.setBackground(event.display.getSystemColor(SWT.COLOR_BLUE));
-				event.gc.fillRectangle(hero.getXpos(), hero.getYpos(), unit, unit);
+				event.gc.drawImage(scaledHero, hero.getXpos(), hero.getYpos());
 				
+				// Drawing Hero range indicator
 				int width = unit / 4;
 				event.gc.setBackground(event.display.getSystemColor(SWT.COLOR_YELLOW));
 				event.gc.fillOval(hero.getCrosshair().x - (width / 2), hero.getCrosshair().y  - (width / 2), width, width);
@@ -138,12 +138,23 @@ public class DungeonView implements Observer {
 	}
 	
 	public void createImages() {
-		rock = new Image(shell.getDisplay(), getClass().getResourceAsStream("images/rock_2_base.png"));
+		rock = new Image(shell.getDisplay(), getClass().getResourceAsStream("images/rock_base.png"));
 		ImageData rockData = rock.getImageData();
-		RGB rgb = rockData.palette.getRGB(rockData.getPixel(0, 0));
-		rockData.transparentPixel = rockData.palette.getPixel(rgb);
-		
+		RGB rockRgb = rockData.palette.getRGB(rockData.getPixel(0, 0));
+		rockData.transparentPixel = rockData.palette.getPixel(rockRgb);
 		scaledRock = new Image(shell.getDisplay(), rockData.scaledTo(50,50));
+		
+		goo = new Image(shell.getDisplay(), getClass().getResourceAsStream("images/goo_1_1.png"));
+		ImageData gooData = goo.getImageData();
+		RGB gooRgb = gooData.palette.getRGB(gooData.getPixel(0, 0));
+		gooData.transparentPixel = gooData.palette.getPixel(gooRgb);
+		scaledGoo = new Image(shell.getDisplay(), gooData.scaledTo(50,50));
+		
+		hero = new Image(shell.getDisplay(), getClass().getResourceAsStream("images/hero_1.png"));
+		ImageData heroData = hero.getImageData();
+		RGB heroRgb = rockData.palette.getRGB(heroData.getPixel(0, 0));
+		heroData.transparentPixel = rockData.palette.getPixel(heroRgb);
+		scaledHero = new Image(shell.getDisplay(), heroData.scaledTo(50,50));
 	}
 	
 	@Override

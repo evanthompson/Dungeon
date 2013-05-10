@@ -12,18 +12,19 @@ public class DungeonFloor {
 	public final int	UNIT_SIZE = 50;
 	
 	private ArrayList<GameObject> objects; // keeps track of all 'units' on THIS floor
-	private ArrayList<InanimateObject> rocks;
+	private ArrayList<Obstacle> rocks;
 	private ArrayList<Mob> enemies;
 	private Hero hero;
 	
 	// Constructor - initiate lists and place objects
 	public DungeonFloor() {
 		objects = new ArrayList<GameObject>(20);
-		rocks = new ArrayList<InanimateObject>();
+		rocks = new ArrayList<Obstacle>();
 		enemies = new ArrayList<Mob>();
 		
-		place(InanimateObject.class, 6);	// Place rocks
-		place(Mob.class, 2);				// Place mobs
+		//place(Stair.class, 2);
+		place(Obstacle.class, 6);
+		place(Mob.class, 2);
 	}
 	
 	// Creates multiple objects of a certain type and places them
@@ -45,9 +46,9 @@ public class DungeonFloor {
 			} while(count < 15);
 			
 			GameObject newObject;
-			if(objectType == InanimateObject.class) {
-				newObject = new InanimateObject(randomX, randomY);
-				rocks.add((InanimateObject) newObject);
+			if(objectType == Obstacle.class) {
+				newObject = new Obstacle(randomX, randomY);
+				rocks.add((Obstacle) newObject);
 				objects.add(newObject);
 			}
 			else if(objectType == Mob.class) {
@@ -73,8 +74,8 @@ public class DungeonFloor {
 				if(newObject instanceof Mob) {
 					enemies.add((Mob) newObject);
 				}
-				if(newObject instanceof InanimateObject) {
-					rocks.add((InanimateObject) newObject);
+				if(newObject instanceof Obstacle) {
+					rocks.add((Obstacle) newObject);
 				}
 				
 			} catch (InstantiationException e) {
@@ -125,7 +126,7 @@ public class DungeonFloor {
 	}
 	
 	// Get Methods
-	public ArrayList<InanimateObject> getRocks() { return rocks; }
+	public ArrayList<Obstacle> getRocks() { return rocks; }
 	public ArrayList<Mob> getEnemies() { return enemies; }
 	public ArrayList<GameObject> getObjects() { return objects; }
 	public Hero getHero() { return hero; }
@@ -135,8 +136,8 @@ public class DungeonFloor {
 	// Prints
 	public void printObjects() {
 		System.out.print("Rocks...");
-		for(InanimateObject inan : getRocks()) {
-			System.out.print(inan.toString());
+		for(Obstacle obst : getRocks()) {
+			System.out.print(obst.toString());
 		}
 		System.out.println();
 		
