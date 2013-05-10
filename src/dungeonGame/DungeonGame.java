@@ -25,21 +25,14 @@ public class DungeonGame extends Observable {
 	public enum Compass { NORTH, WEST, EAST, SOUTH }
 	private Hero hero;
 	private DungeonFloor level;
+	private ArrayList<DungeonFloor> dungeon;
 	
 	public DungeonGame() {
 		
-		level = new DungeonFloor();
-		System.out.print("Rocks...");
-		for(InanimateObject inan : level.getRocks()) {
-			System.out.print(inan.toString());
-		}
-		System.out.println();
-		
-		System.out.print("Mobs...");
-		for(Mob m : level.getEnemies()) {
-			System.out.print(m.toString());
-		}
-		System.out.println();
+		dungeon = new ArrayList<DungeonFloor>();
+		dungeon.add(new DungeonFloor());
+		level = dungeon.get(0);
+		level.place(Hero.class, 1);
 		
 		// Hero Generation
 		hero = level.getHero();
@@ -59,7 +52,6 @@ public class DungeonGame extends Observable {
 		int yCheck = mover.getYpos() + yStep;
 		if(xFactor > 0) { xCheck += mover.SIZE; }
 		if(yFactor > 0) { yCheck += mover.SIZE; }
-		
 		int xpos = mover.getXpos();
 		int ypos = mover.getYpos();
 		
@@ -68,17 +60,13 @@ public class DungeonGame extends Observable {
 		for(GameObject obj : level.getObjects()) {
 			int objX = obj.getXpos();
 			int objY = obj.getYpos();
-			if(level.overlapAt(obj, new Point(xCheck, yCheck))) {
-				xStep = xFactor * Math.max(0, Math.min(Math.abs(xStep), Math.abs(xpos - objX) - mover.SIZE));
-				yStep = yFactor * Math.max(0, Math.min(Math.abs(yStep), Math.abs(ypos - objY) - mover.SIZE));
-			}
-			if(level.overlapAt(obj, upperPoint)) {
+			if(level.overlapAt(obj, new Point(xCheck, yCheck)) || level.overlapAt(obj, upperPoint)) {
 				xStep = xFactor * Math.max(0, Math.min(Math.abs(xStep), Math.abs(xpos - objX) - mover.SIZE));
 				yStep = yFactor * Math.max(0, Math.min(Math.abs(yStep), Math.abs(ypos - objY) - mover.SIZE));
 			}
 		}
-		mover.setXpos(Math.max(0, mover.getXpos() + xStep));
-		mover.setYpos(Math.max(0, mover.getYpos() + yStep));
+		mover.setXpos(Math.min(level.getMapWidth() - mover.SIZE, Math.max(0, mover.getXpos() + xStep)));
+		mover.setYpos(Math.min(level.getMapHeight() - mover.SIZE, Math.max(0, mover.getYpos() + yStep)));
 		int dirNum = (2 * (yFactor + 1)) + xFactor;
 		if(dirNum >= 3) dirNum--;
 		mover.setDirection(Compass.values()[dirNum]);

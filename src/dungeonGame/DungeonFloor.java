@@ -7,9 +7,9 @@ import java.util.ArrayList;
 // Contains floor related information, including:
 // dimensions of map, rock and mob lists
 public class DungeonFloor {
-	public static final int 	MAP_HEIGHT = 500;
-	public static final int 	MAP_WIDTH = 500;
-	public static final int		UNIT_SIZE = 50;
+	public final int 	MAP_HEIGHT = 500;
+	public final int 	MAP_WIDTH = 500;
+	public final int	UNIT_SIZE = 50;
 	
 	private ArrayList<GameObject> objects; // keeps track of all 'units' on THIS floor
 	private ArrayList<InanimateObject> rocks;
@@ -24,7 +24,6 @@ public class DungeonFloor {
 		
 		place(InanimateObject.class, 6);	// Place rocks
 		place(Mob.class, 2);				// Place mobs
-		place(Hero.class, 1);
 	}
 	
 	// Creates multiple objects of a certain type and places them
@@ -130,4 +129,21 @@ public class DungeonFloor {
 	public ArrayList<Mob> getEnemies() { return enemies; }
 	public ArrayList<GameObject> getObjects() { return objects; }
 	public Hero getHero() { return hero; }
+	public int getMapHeight() { return MAP_HEIGHT; }
+	public int getMapWidth() { return MAP_WIDTH; }
+	
+	// Prints
+	public void printObjects() {
+		System.out.print("Rocks...");
+		for(InanimateObject inan : getRocks()) {
+			System.out.print(inan.toString());
+		}
+		System.out.println();
+		
+		System.out.print("Mobs...");
+		for(Mob m : getEnemies()) {
+			System.out.print(m.toString());
+		}
+		System.out.println();
+	}
 }
