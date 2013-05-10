@@ -8,8 +8,13 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.ImageData;
+import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
@@ -19,11 +24,11 @@ import org.eclipse.swt.widgets.Shell;
 public class DungeonView implements Observer {
 	private ArrayList<Color> cleanUp;
 	private Color dGray, gray, lGray;
-	DungeonGame newGame;
+	private Image rock, scaledRock, floorTexture;
+	private DungeonGame newGame;
 	
-	private Display display;
 	private Shell shell;
-	private Composite floor;
+	private Canvas floor;
 	private Composite menu;
 	
 	public DungeonView(Shell s) {
@@ -32,7 +37,8 @@ public class DungeonView implements Observer {
 		this.shell = s;
 		
 		cleanUp = new ArrayList<Color>(10);
-		makeColors(display);
+		makeColors();
+		createImages();
 		
 		GridLayout layout;
 		GridData data;
@@ -42,8 +48,11 @@ public class DungeonView implements Observer {
 		shell.setLayout(layout);
 		
 		// Floor Initialization
-		floor = new Composite(shell, SWT.NONE);
-		floor.setBackground(lGray);
+		floor = new Canvas(shell, SWT.NONE);
+		floor.setBackground(gray);
+		//floorTexture = new Image(shell.getDisplay(), DungeonView.class.getResourceAsStream("images/premade_tile_single.png"));
+		//floor.setBackgroundImage(floorTexture);
+		
 		
 		data = new GridData();
 		data.horizontalAlignment = SWT.BEGINNING;
@@ -70,29 +79,30 @@ public class DungeonView implements Observer {
 				for(GameObject obj : objects) {
 					String life = "";
 					if(obj instanceof Mob) {
-						event.gc.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_DARK_RED));
-						event.gc.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_WHITE));
+						event.gc.setBackground(event.display.getSystemColor(SWT.COLOR_DARK_RED));
+						event.gc.setForeground(event.display.getSystemColor(SWT.COLOR_WHITE));
 						life = ((Mob) obj).getCurrHealth() + " / " + ((Mob) obj).getMaxHealth();
+						event.gc.fillRectangle(obj.getXpos(), obj.getYpos(), unit, unit);
 					}
 					else if(obj instanceof InanimateObject) {
-						event.gc.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_BLACK));
-						life = "*";
+						//event.gc.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_BLACK));
+						event.gc.drawImage(scaledRock, obj.getXpos(), obj.getYpos());
+						life = "";
 					} else {
-						event.gc.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_YELLOW));
+						event.gc.setBackground(event.display.getSystemColor(SWT.COLOR_YELLOW));
+						event.gc.fillRectangle(obj.getXpos(), obj.getYpos(), unit, unit);
 					}
-					event.gc.fillRectangle(obj.getXpos(), obj.getYpos(), unit, unit);
 					event.gc.drawText(life, obj.getXpos() + 5, obj.getYpos() + 5);
 				}
 				
 				Hero hero = newGame.getHero();
-				event.gc.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_BLUE));
+				event.gc.setBackground(event.display.getSystemColor(SWT.COLOR_BLUE));
 				event.gc.fillRectangle(hero.getXpos(), hero.getYpos(), unit, unit);
 				
 				int width = unit / 4;
-				event.gc.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_YELLOW));
+				event.gc.setBackground(event.display.getSystemColor(SWT.COLOR_YELLOW));
 				event.gc.fillOval(hero.getCrosshair().x - (width / 2), hero.getCrosshair().y  - (width / 2), width, width);
 				
-				event.gc.dispose();
 			}
 		});
 		
@@ -111,19 +121,31 @@ public class DungeonView implements Observer {
 				for(Color c : cleanUp) {
 					c.dispose();
 				}
+				//floorTexture.dispose();
+				rock.dispose();
+				scaledRock.dispose();
 			}
 		});
 		
 	}
 	
-	public void makeColors(Display display) {
-		dGray = new Color(display, 30, 30, 30);
-		gray = new Color(display, 150, 150, 150);
-		lGray = new Color(display, 200, 200, 200);
+	public void makeColors() {
+		dGray = new Color(shell.getDisplay(), 30, 30, 30);
+		gray = new Color(shell.getDisplay(), 150, 150, 150);
+		lGray = new Color(shell.getDisplay(), 200, 200, 200);
 		
 		cleanUp.add(dGray);
 		cleanUp.add(gray);
 		cleanUp.add(lGray);
+	}
+	
+	public void createImages() {
+		rock = new Image(shell.getDisplay(), getClass().getResourceAsStream("images/rock_2_base.png"));
+		ImageData rockData = rock.getImageData();
+		RGB rgb = rockData.palette.getRGB(rockData.getPixel(0, 0));
+		rockData.transparentPixel = rockData.palette.getPixel(rgb);
+		
+		scaledRock = new Image(shell.getDisplay(), rockData.scaledTo(50,50));
 	}
 	
 	@Override
