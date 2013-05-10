@@ -46,6 +46,7 @@ public class DungeonGame extends Observable {
 	}
 	
 	public void move(AnimateObject mover, int xFactor, int yFactor) {
+		
 		int xStep = xFactor * mover.getStride();
 		int yStep = yFactor * mover.getStride();
 		int xCheck = mover.getXpos() + xStep;
@@ -60,7 +61,9 @@ public class DungeonGame extends Observable {
 		for(GameObject obj : level.getObjects()) {
 			int objX = obj.getXpos();
 			int objY = obj.getYpos();
+			if(xStep == 0 && yStep == 0) { break; }
 			if(level.overlapAt(obj, new Point(xCheck, yCheck)) || level.overlapAt(obj, upperPoint)) {
+				// If obj instanceof stair --> go to vertical traversal
 				xStep = xFactor * Math.max(0, Math.min(Math.abs(xStep), Math.abs(xpos - objX) - mover.SIZE));
 				yStep = yFactor * Math.max(0, Math.min(Math.abs(yStep), Math.abs(ypos - objY) - mover.SIZE));
 			}

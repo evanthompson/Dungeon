@@ -19,8 +19,8 @@ public class DungeonFloor {
 	// Constructor - initiate lists and place objects
 	public DungeonFloor() {
 		objects = new ArrayList<GameObject>(20);
-		rocks = new ArrayList<InanimateObject>(10);
-		enemies = new ArrayList<Mob>(10);
+		rocks = new ArrayList<InanimateObject>();
+		enemies = new ArrayList<Mob>();
 		
 		place(InanimateObject.class, 6);	// Place rocks
 		place(Mob.class, 2);				// Place mobs
