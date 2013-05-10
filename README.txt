@@ -11,6 +11,8 @@ TODO List:
 		---Storage of floors and their attributes (Objects)
 	--Floor size
 		---How far off screen will the floor run?
+		---How will the game deal with screen movement
+			Hero always centered, or complete screen swaps?
 		
 -Battle
 	--Contact (direct or weapon)
@@ -24,8 +26,16 @@ TODO List:
 
 -Images
 	--Player
-		-- Angle of facing
+		-- Update of direction (visually)
+		-- Walking animation (feet movement)
 	--Mobs
 	--Rocks
 	--Floor tiles
 	--Stairs
+	--walls
+	
+-Game States
+	-- Save / Load Characters and Games(?)
+	-- Menus
+		-- Inventory / stats
+		-- Opening / Game over menu
