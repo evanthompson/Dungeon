@@ -4,8 +4,6 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.util.ArrayList;
 
-import dungeonGame.DungeonGame.Compass;
-
 // Contains floor related information, including:
 // dimensions of map, rock and mob lists
 public class DungeonFloor {
@@ -59,7 +57,6 @@ public class DungeonFloor {
 				objects.add(newObject);
 			}
 			else if(objectType == Hero.class) {
-				//System.out.println("Placed the hero on this floor");
 				newObject = new Hero(randomX, randomY);
 				objects.add(newObject);
 				hero = (Hero) newObject;
@@ -92,71 +89,7 @@ public class DungeonFloor {
 			
 		}
 	}
-	
-	public void moveWest(AnimateObject mover) {
-		int step = mover.getStride();
 		
-		for(GameObject g : getObjects()) {
-			Rectangle newRect = new Rectangle(g.getXpos(), g.getYpos(), UNIT_SIZE, UNIT_SIZE);
-			Point p1 = new Point(mover.getXpos() - step, mover.getYpos());
-			Point p2 = new Point(mover.getXpos() - step, mover.getYpos() + UNIT_SIZE - 1);
-			if(newRect.contains(p1) || newRect.contains(p2)) {
-				step = Math.min(step, Math.abs(mover.getXpos() - (g.getXpos() + UNIT_SIZE)));
-				if(step == 0) { break; }
-			}
-		}
-		mover.setXpos(Math.max(0, mover.getXpos() - step));
-		mover.setDirection(Compass.WEST);
-	}
-	
-	public void moveEast(AnimateObject mover) {
-		int step = mover.getStride();
-		
-		for(GameObject g : getObjects()) {
-			Rectangle newRect = new Rectangle(g.getXpos(), g.getYpos(), UNIT_SIZE, UNIT_SIZE);
-			Point p1 = new Point(mover.getXpos() + UNIT_SIZE + step, mover.getYpos());
-			Point p2 = new Point(mover.getXpos() + UNIT_SIZE + step, mover.getYpos() + UNIT_SIZE - 1);
-			if(newRect.contains(p1) || newRect.contains(p2)) {
-				step = Math.min(step, Math.abs((mover.getXpos() + UNIT_SIZE) - g.getXpos()));
-				if(step == 0) { break; }
-			}
-		}
-		mover.setXpos(Math.min(MAP_WIDTH - UNIT_SIZE, mover.getXpos() + step));
-		mover.setDirection(Compass.EAST);
-	}
-	
-	public void moveNorth(AnimateObject mover) {
-		int step = mover.getStride();
-		
-		for(GameObject g : getObjects()) {
-			Rectangle newRect = new Rectangle(g.getXpos(), g.getYpos(), UNIT_SIZE, UNIT_SIZE);
-			Point p1 = new Point(mover.getXpos(), mover.getYpos() - step);
-			Point p2 = new Point(mover.getXpos() + UNIT_SIZE - 1, mover.getYpos() - step);
-			if(newRect.contains(p1) || newRect.contains(p2)) {
-				step = Math.min(step, Math.abs(mover.getYpos() - (g.getYpos() + UNIT_SIZE)));
-				if(step == 0) { break; }
-			}
-		}
-		mover.setYpos(Math.max(0, mover.getYpos() - step));
-		mover.setDirection(Compass.NORTH);
-	}
-	
-	public void moveSouth(AnimateObject mover) {
-		int step = mover.getStride();
-		
-		for(GameObject g : getObjects()) {
-			Rectangle newRect = new Rectangle(g.getXpos(), g.getYpos(), UNIT_SIZE, UNIT_SIZE);
-			Point p1 = new Point(mover.getXpos(), mover.getYpos() + UNIT_SIZE + step);
-			Point p2 = new Point(mover.getXpos() + UNIT_SIZE - 1, mover.getYpos() + UNIT_SIZE + step);
-			if(newRect.contains(p1) || newRect.contains(p2)) {
-				step = Math.min(step, Math.abs((mover.getYpos() + UNIT_SIZE) - g.getYpos()));
-				if(step == 0) { break; }
-			}
-		}
-		mover.setYpos(Math.min(MAP_HEIGHT - UNIT_SIZE, mover.getYpos() + step));
-		mover.setDirection(Compass.SOUTH);
-	}
-	
 	public boolean overlapAt(GameObject obj, Point p) {
 		Rectangle rect = new Rectangle(obj.getXpos(), obj.getYpos(), UNIT_SIZE, UNIT_SIZE);
 		if(rect.contains(p)) {
@@ -183,10 +116,11 @@ public class DungeonFloor {
 	public void removeObject(GameObject waste) {
 		for(GameObject w : objects) {
 			if(waste.equals(w)) {
-				System.out.println(waste.getClass().getSimpleName() + " is being removed..");
-				if(enemies.remove(w)) { System.out.println("Object removed from 'enemies'"); }
-				if(rocks.remove(w)) { System.out.println("Object removed from 'rocks'"); }
-				if(objects.remove(w)) { System.out.println("Object removed from 'objects'"); }
+				System.out.print(waste.getClass().getSimpleName() + " is being removed from..");
+				if(enemies.remove(w)) { System.out.print(" Enemies"); }
+				if(rocks.remove(w)) { System.out.print(" Rocks"); }
+				if(objects.remove(w)) { System.out.print(" GameObjects"); }
+				System.out.println();
 			}
 		}
 	}
