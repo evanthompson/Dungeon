@@ -1,5 +1,6 @@
 package dungeonGame;
 
+import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Observable;
 
@@ -21,7 +22,7 @@ public class DungeonGame extends Observable {
 				Each Floor must be remembered
 	 */
 	
-	public enum Compass { NORTH, SOUTH, EAST, WEST }
+	public enum Compass { NORTH, WEST, EAST, SOUTH }
 	private Hero hero;
 	private DungeonFloor level;
 	
@@ -51,14 +52,37 @@ public class DungeonGame extends Observable {
 		notifyObservers();
 	}
 	
-	public void desiredMove(Compass direction, AnimateObject mover) {
-		switch(direction) {
-			case WEST:	level.moveWest(mover);	break;
-			case EAST:	level.moveEast(mover);	break;
-			case NORTH:	level.moveNorth(mover);	break;
-			case SOUTH:	level.moveSouth(mover);	break;
-			default: System.out.println("invalid direction..");
+	public void move(AnimateObject mover, int xFactor, int yFactor) {
+		int xStep = xFactor * mover.getStride();
+		int yStep = yFactor * mover.getStride();
+		int xCheck = mover.getXpos() + xStep;
+		int yCheck = mover.getYpos() + yStep;
+		if(xFactor > 0) { xCheck += mover.SIZE; }
+		if(yFactor > 0) { yCheck += mover.SIZE; }
+		
+		int xpos = mover.getXpos();
+		int ypos = mover.getYpos();
+		
+		Point upperPoint = new Point(xCheck + Math.abs(yFactor)*(mover.SIZE-1), 
+				yCheck + Math.abs(xFactor)*(mover.SIZE-1));
+		for(GameObject obj : level.getObjects()) {
+			int objX = obj.getXpos();
+			int objY = obj.getYpos();
+			if(level.overlapAt(obj, new Point(xCheck, yCheck))) {
+				xStep = xFactor * Math.max(0, Math.min(Math.abs(xStep), Math.abs(xpos - objX) - mover.SIZE));
+				yStep = yFactor * Math.max(0, Math.min(Math.abs(yStep), Math.abs(ypos - objY) - mover.SIZE));
+			}
+			if(level.overlapAt(obj, upperPoint)) {
+				xStep = xFactor * Math.max(0, Math.min(Math.abs(xStep), Math.abs(xpos - objX) - mover.SIZE));
+				yStep = yFactor * Math.max(0, Math.min(Math.abs(yStep), Math.abs(ypos - objY) - mover.SIZE));
+			}
 		}
+		mover.setXpos(Math.max(0, mover.getXpos() + xStep));
+		mover.setYpos(Math.max(0, mover.getYpos() + yStep));
+		int dirNum = (2 * (yFactor + 1)) + xFactor;
+		if(dirNum >= 3) dirNum--;
+		mover.setDirection(Compass.values()[dirNum]);
+		
 		updateGame();
 	}
 	

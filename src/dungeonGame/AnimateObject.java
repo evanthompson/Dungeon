@@ -68,8 +68,8 @@ public class AnimateObject extends GameObject {
 		switch(dir) {
 			case NORTH:	crosshair = new Point(getXpos() + (SIZE / 2), getYpos() - reach); break;
 			case EAST:	crosshair = new Point(getXpos() + SIZE + reach, getYpos() + (SIZE / 2)); break;
-			case SOUTH:	crosshair = new Point(getXpos() + (SIZE / 2), getYpos() + SIZE + reach); break;
 			case WEST:	crosshair = new Point(getXpos() - reach, getYpos() + (SIZE / 2)); break;
+			case SOUTH:	crosshair = new Point(getXpos() + (SIZE / 2), getYpos() + SIZE + reach); break;			
 			default:	crosshair = new Point(getXpos() + (SIZE / 2), getYpos() + SIZE + reach); // South
 		}
 	}
