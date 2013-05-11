@@ -23,7 +23,7 @@ import org.eclipse.swt.widgets.Shell;
 public class DungeonView implements Observer {
 	private ArrayList<Resource> cleanUp;
 	private Color dGray, gray, lGray;
-	private Image rock, goo, hero, stairsUp, stairsDown, floorTexture;
+	private Image rock, goo, hero, stairsUp, stairsDown/*, floorTexture*/;
 	private DungeonGame newGame;
 	
 	private Shell shell;

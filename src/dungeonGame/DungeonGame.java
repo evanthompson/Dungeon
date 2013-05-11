@@ -26,12 +26,13 @@ public class DungeonGame extends Observable {
 	private Hero hero;
 	private DungeonFloor level;
 	private ArrayList<DungeonFloor> dungeon;
+	private int currLevel;
 	
 	public DungeonGame() {
-		
+		currLevel = 0;
 		dungeon = new ArrayList<DungeonFloor>();
-		dungeon.add(new DungeonFloor());
-		level = dungeon.get(0);
+		dungeon.add(new DungeonFloor(currLevel));
+		level = dungeon.get(currLevel);
 		
 		// Hero Generation
 		Point heroStart = level.findFreePoint();
@@ -69,6 +70,9 @@ public class DungeonGame extends Observable {
 			if(xStep == 0 && yStep == 0) { break; }
 			if(level.overlapAt(obj, new Point(xCheck, yCheck)) || level.overlapAt(obj, upperPoint)) {
 				// If obj instanceof stair --> go to vertical traversal
+				if(obj instanceof Stair) {
+					moveFloors((Stair) obj);
+				}
 				xStep = xFactor * Math.max(0, Math.min(Math.abs(xStep), Math.abs(xpos - objX) - mover.SIZE));
 				yStep = yFactor * Math.max(0, Math.min(Math.abs(yStep), Math.abs(ypos - objY) - mover.SIZE));
 			}
@@ -80,6 +84,22 @@ public class DungeonGame extends Observable {
 		mover.setDirection(Compass.values()[dirNum]);
 		
 		updateGame();
+	}
+	
+	public void moveFloors(Stair stairs) {
+		if(stairs.getDescent() == true) {
+			currLevel++;
+			if(dungeon.size() <= currLevel) {
+				dungeon.add(new DungeonFloor(currLevel));
+			}
+			level = dungeon.get(currLevel);
+			
+		} else {
+			if(currLevel > 0) {
+				currLevel--;
+				level = dungeon.get(currLevel);
+			}
+		}
 	}
 	
 	public void attack() {

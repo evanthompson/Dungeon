@@ -16,16 +16,28 @@ public class DungeonFloor {
 	private ArrayList<Mob> enemies;
 	private ArrayList<Stair> stairs;
 	
+	private int level;
+	
 	// Constructor - initiate lists and place objects
-	public DungeonFloor() {
+	public DungeonFloor(int level) {
+		this.level = level;
 		objects = new ArrayList<GameObject>(20);
 		rocks = new ArrayList<Obstacle>();
 		enemies = new ArrayList<Mob>();
 		stairs = new ArrayList<Stair>(5);
 		
-		placeObjects(Stair.class, 2);
+		populate();
+		
+	}
+	
+	public void populate() {
+		if(level > 0) {
+			placeObjects(Stair.class, 2);
+			stairs.get(1).setDescent(false);
+		} else {
+			placeObjects(Stair.class, 1);
+		}
 		stairs.get(0).setDescent(true);
-		stairs.get(1).setDescent(false);
 		
 		placeObjects(Obstacle.class, 6);
 		placeObjects(Mob.class, 2);
@@ -133,6 +145,7 @@ public class DungeonFloor {
 	public ArrayList<Obstacle> getRocks() { return rocks; }
 	public ArrayList<Mob> getEnemies() { return enemies; }
 	public ArrayList<GameObject> getObjects() { return objects; }
+	public ArrayList<Stair> getStairs() { return stairs; }
 	public int getMapHeight() { return MAP_HEIGHT; }
 	public int getMapWidth() { return MAP_WIDTH; }
 	
