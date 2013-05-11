@@ -9,6 +9,11 @@ TODO List:
 	--Level traversal
 		---Transition between floors (stairs)
 		---Storage of floors and their attributes (Objects)
+		
+		Still need to connect stairs spatially (same x/y coordinates), and stack them in pairs.
+		Need to check for collisions upon hero arriving at new floor.
+		Need to refine conditions for contact with Stair Objects.
+		
 	--Floor size
 		---How far off screen will the floor run?
 		---How will the game deal with screen movement
