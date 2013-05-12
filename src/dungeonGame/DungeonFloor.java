@@ -56,8 +56,7 @@ public class DungeonFloor {
 			GameObject newObject;
 			try {
 				newObject = (GameObject) Class.forName(objectType.getName()).newInstance();
-				newObject.setXpos(newPoint.x);
-				newObject.setYpos(newPoint.y);
+				newObject.setPosition(newPoint);
 				organizeObject(newObject);
 				
 			} catch (InstantiationException e) {

@@ -38,8 +38,6 @@ public class DungeonGame extends Observable {
 		Point heroStart = level.findFreePoint();
 		if(heroStart != null) {
 			hero = new Hero(heroStart.x, heroStart.y, 100);
-			hero.setMaxHealth(100);
-			hero.setCurrHealth(100);
 			level.organizeObject(hero);
 		}
 	}
@@ -52,7 +50,6 @@ public class DungeonGame extends Observable {
 	}
 	
 	public void move(AnimateObject mover, int xFactor, int yFactor) {
-		
 		int xStep = xFactor * mover.getStride();
 		int yStep = yFactor * mover.getStride();
 		int xCheck = mover.getPos().x + xStep;

@@ -59,8 +59,12 @@ public class DungeonController implements KeyListener {
 		case 115:	game.move(game.getHero(), 0, 1);	/* SOUTH */	break;
 		case 122:	game.attack();
 					break;
-		case 120:	System.out.println(e.keyCode);
-					break;
+		case 120:
+			for(GameObject obj : game.getFloor().getObjects()) {
+				System.out.print(obj.getClass().getSimpleName() + " ");
+			}
+			System.out.println();
+			break;
 		case 99:	System.out.println(e.keyCode);
 					break;
 		default:	System.out.println("not supported");
