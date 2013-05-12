@@ -78,29 +78,29 @@ public class DungeonView implements Observer {
 				for(GameObject obj : objects) {
 					String life = "";
 					if(obj instanceof Mob) {
-						event.gc.drawImage(goo, obj.getXpos(), obj.getYpos());
+						event.gc.drawImage(goo, obj.getPos().x, obj.getPos().y);
 						life = ((Mob) obj).getCurrHealth() + " / " + ((Mob) obj).getMaxHealth();
 						event.gc.setForeground(event.display.getSystemColor(SWT.COLOR_WHITE));
-						event.gc.drawText(life, obj.getXpos() + 5, obj.getYpos() + 5, true);
+						event.gc.drawText(life, obj.getPos().x + 5, obj.getPos().y + 5, true);
 					}
 					else if(obj instanceof Obstacle) {
-						event.gc.drawImage(rock, obj.getXpos(), obj.getYpos());
+						event.gc.drawImage(rock, obj.getPos().x, obj.getPos().y);
 						life = "";
 					} 
 					else if(obj instanceof Stair) {
 						if(((Stair) obj).getDescent() == true) {
-							event.gc.drawImage(stairsDown, obj.getXpos(), obj.getYpos());
-						} else { event.gc.drawImage(stairsUp, obj.getXpos(), obj.getYpos()); }
+							event.gc.drawImage(stairsDown, obj.getPos().x, obj.getPos().y);
+						} else { event.gc.drawImage(stairsUp, obj.getPos().x, obj.getPos().y); }
 					}
 					else if(!(obj instanceof Hero)) {
 						event.gc.setBackground(event.display.getSystemColor(SWT.COLOR_YELLOW));
-						event.gc.fillRectangle(obj.getXpos(), obj.getYpos(), unit, unit);
+						event.gc.fillRectangle(obj.getPos().x, obj.getPos().y, unit, unit);
 					}
 				}
 				
 				// Drawing Hero
 				Hero heroObj = newGame.getHero();
-				event.gc.drawImage(hero, heroObj.getXpos(), heroObj.getYpos());
+				event.gc.drawImage(hero, heroObj.getPos().x, heroObj.getPos().y);
 				
 				// Drawing Hero range indicator
 				int width = unit / 4;
@@ -113,7 +113,7 @@ public class DungeonView implements Observer {
 		menu.addListener(SWT.Paint, new Listener () {
 			public void handleEvent (Event event) {
 				Hero hero = newGame.getHero();
-				event.gc.drawText(hero.getXpos() + "," + hero.getYpos(), 10, 10);
+				event.gc.drawText(hero.getPos().x + "," + hero.getPos().y, 10, 10);
 				event.gc.drawText("Experience: " + hero.getExperience(), 10, 30);
 				event.gc.drawText("Money: " + hero.getBooty(), 10, 50);
 			}

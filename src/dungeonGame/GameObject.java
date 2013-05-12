@@ -1,30 +1,35 @@
 package dungeonGame;
 
+import java.awt.Point;
+
 // Generic object found within the environment of the game board
 public abstract class GameObject {
-	private int xpos;
-	private int ypos;
+	private Point position;
 	protected final int SIZE = 50;
 	
 	public GameObject() {
-		setXpos(0);
-		setYpos(0);
+		position = new Point(0, 0);
 	}
 	
 	public GameObject(int x, int y) {
-		setXpos(x);
-		setYpos(y);
+		position = new Point(x, y);
+	}
+	
+	public GameObject(Point p) {
+		position = p;
 	}
 	
 	// Set Methods
-	public void setXpos(int x) { xpos = x; }
-	public void setYpos(int y) { ypos = y; }
+	public void setPosition(Point p) {
+		position = p;
+	}
+	public void setXpos(int x) { position.x = x; }
+	public void setYpos(int y) { position.y = y; }
 	
 	// Get Methods
-	public int getXpos() { return xpos; }
-	public int getYpos() { return ypos; }
+	public Point getPos() { return position; }
 	
 	public String toString() {
-		return "(" + xpos + "," + ypos + ")";
+		return "(" + position.x + "," + position.y + ")";
 	}
 }

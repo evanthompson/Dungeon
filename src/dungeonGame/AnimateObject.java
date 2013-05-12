@@ -5,31 +5,31 @@ import java.awt.Point;
 import dungeonGame.DungeonGame.Compass;
 
 public class AnimateObject extends GameObject {
-	protected int maxHealth;
-	protected int currHealth;
-	protected int strength;
 	protected Compass direction;
-	protected int stride;
-	protected int reach;
 	protected Point crosshair;
+	
+	protected int maxHealth, currHealth;
+	protected int strength, stride, reach;
 	
 	// Constructor
 	public AnimateObject() {
-		super(0, 0);
+		super();
 		maxHealth = currHealth = 1;
-		strength = 1;
-		stride = 10;
-		reach = 20;
+		setStats();
 		initDirection();
 	}
 	
 	public AnimateObject(int x, int y, int h) {
 		super(x, y);
 		maxHealth = currHealth = h;
+		setStats();
+		initDirection();
+	}
+	
+	private void setStats() {
 		strength = 1;
 		stride = 10;
 		reach = 20;
-		initDirection();
 	}
 	
 	private void initDirection() {
@@ -65,12 +65,20 @@ public class AnimateObject extends GameObject {
 		setCrosshair(dir);
 	}
 	public void setCrosshair(Compass dir) {
+		if(crosshair == null) {
+			crosshair = new Point(0, 0);
+		}
 		switch(dir) {
-			case NORTH:	crosshair = new Point(getXpos() + (SIZE / 2), getYpos() - reach); break;
-			case EAST:	crosshair = new Point(getXpos() + SIZE + reach, getYpos() + (SIZE / 2)); break;
-			case WEST:	crosshair = new Point(getXpos() - reach, getYpos() + (SIZE / 2)); break;
-			case SOUTH:	crosshair = new Point(getXpos() + (SIZE / 2), getYpos() + SIZE + reach); break;			
-			default:	crosshair = new Point(getXpos() + (SIZE / 2), getYpos() + SIZE + reach); // South
+			case NORTH:	crosshair.x = getPos().x + (SIZE / 2);
+						crosshair.y = getPos().y - reach; break;
+			case EAST:	crosshair.x = getPos().x + SIZE + reach;
+						crosshair.y = getPos().y + (SIZE / 2); break;
+			case WEST:	crosshair.x = getPos().x - reach;
+						crosshair.y = getPos().y + (SIZE / 2); break;
+			case SOUTH:	crosshair.x = getPos().x + (SIZE / 2);
+						crosshair.y = getPos().y + SIZE + reach; break;
+			default:	crosshair.x = getPos().x + (SIZE / 2);
+						crosshair.y = getPos().y + SIZE + reach; break; // South
 		}
 	}
 	

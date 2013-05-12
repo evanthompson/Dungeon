@@ -107,7 +107,7 @@ public class DungeonFloor {
 	}
 		
 	public boolean overlapAt(GameObject obj, Point p) {
-		Rectangle rect = new Rectangle(obj.getXpos(), obj.getYpos(), UNIT_SIZE, UNIT_SIZE);
+		Rectangle rect = new Rectangle(obj.getPos().x, obj.getPos().y, UNIT_SIZE, UNIT_SIZE);
 		if(rect.contains(p)) {
 			return true;
 		}
@@ -118,9 +118,8 @@ public class DungeonFloor {
 	public boolean anyOverlapAt(Point p) {
 		Rectangle rect;
 		for(GameObject obj : objects) {
-			rect = new Rectangle(obj.getXpos(), obj.getYpos(), UNIT_SIZE, UNIT_SIZE);
+			rect = new Rectangle(obj.getPos().x, obj.getPos().y, UNIT_SIZE, UNIT_SIZE);
 			if(rect.contains(p)) {
-				System.out.println("overlap at: " + obj.toString());
 				return true;
 			}
 		}
@@ -137,6 +136,7 @@ public class DungeonFloor {
 				if(rocks.remove(w)) { System.out.print(" Rocks"); }
 				if(objects.remove(w)) { System.out.print(" GameObjects"); }
 				System.out.println();
+				break;
 			}
 		}
 	}

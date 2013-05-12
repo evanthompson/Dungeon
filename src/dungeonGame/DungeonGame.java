@@ -37,7 +37,7 @@ public class DungeonGame extends Observable {
 		// Hero Generation
 		Point heroStart = level.findFreePoint();
 		if(heroStart != null) {
-			hero = new Hero(heroStart.x, heroStart.y);
+			hero = new Hero(heroStart.x, heroStart.y, 100);
 			hero.setMaxHealth(100);
 			hero.setCurrHealth(100);
 			level.organizeObject(hero);
@@ -55,18 +55,18 @@ public class DungeonGame extends Observable {
 		
 		int xStep = xFactor * mover.getStride();
 		int yStep = yFactor * mover.getStride();
-		int xCheck = mover.getXpos() + xStep;
-		int yCheck = mover.getYpos() + yStep;
+		int xCheck = mover.getPos().x + xStep;
+		int yCheck = mover.getPos().y + yStep;
 		if(xFactor > 0) { xCheck += mover.SIZE; }
 		if(yFactor > 0) { yCheck += mover.SIZE; }
-		int xpos = mover.getXpos();
-		int ypos = mover.getYpos();
+		int xpos = mover.getPos().x;
+		int ypos = mover.getPos().y;
 		
 		Point upperPoint = new Point(xCheck + Math.abs(yFactor)*(mover.SIZE-1), 
 				yCheck + Math.abs(xFactor)*(mover.SIZE-1));
 		for(GameObject obj : level.getObjects()) {
-			int objX = obj.getXpos();
-			int objY = obj.getYpos();
+			int objX = obj.getPos().x;
+			int objY = obj.getPos().y;
 			if(xStep == 0 && yStep == 0) { break; }
 			if(level.overlapAt(obj, new Point(xCheck, yCheck)) || level.overlapAt(obj, upperPoint)) {
 				// If obj instanceof stair --> go to vertical traversal
@@ -77,8 +77,8 @@ public class DungeonGame extends Observable {
 				yStep = yFactor * Math.max(0, Math.min(Math.abs(yStep), Math.abs(ypos - objY) - mover.SIZE));
 			}
 		}
-		mover.setXpos(Math.min(level.getMapWidth() - mover.SIZE, Math.max(0, mover.getXpos() + xStep)));
-		mover.setYpos(Math.min(level.getMapHeight() - mover.SIZE, Math.max(0, mover.getYpos() + yStep)));
+		mover.setXpos(Math.min(level.getMapWidth() - mover.SIZE, Math.max(0, mover.getPos().x + xStep)));
+		mover.setYpos(Math.min(level.getMapHeight() - mover.SIZE, Math.max(0, mover.getPos().y + yStep)));
 		int dirNum = (2 * (yFactor + 1)) + xFactor;
 		if(dirNum >= 3) dirNum--;
 		mover.setDirection(Compass.values()[dirNum]);
@@ -111,7 +111,6 @@ public class DungeonGame extends Observable {
 		}
 		for(Mob m : targets) {
 			m.damage(hero.getStrength() * 10);
-			System.out.println("Hero hit " + m.getClass().getSimpleName() + " for " + hero.getStrength() * 10);
 			if(m.getCurrHealth() <= 0) {
 				System.out.println("hero got " + m.getBooty() + " gil and " + m.getExperience() + " experience.");
 				hero.addBooty(m.getBooty());
