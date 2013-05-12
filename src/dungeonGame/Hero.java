@@ -8,17 +8,12 @@ public class Hero extends AnimateObject {
 	private int cLevel;
 	
 	public Hero() {
-		super(0, 0, 10);
+		super(0, 0, 100);
 		init();
 	}
 	
-	public Hero(int h) {
-		super(0, 0, h);
-		init();
-	}
-	
-	public Hero(int x, int y) {
-		super(x, y, 10);
+	public Hero(int x, int y, int h) {
+		super(x, y, h);
 		init();
 	}
 	
