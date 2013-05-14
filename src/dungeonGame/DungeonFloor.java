@@ -3,6 +3,7 @@ package dungeonGame;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.util.ArrayList;
+import java.util.ListIterator;
 
 // Contains floor related information, including:
 // dimensions of map, rock and mob lists
@@ -128,15 +129,19 @@ public class DungeonFloor {
 	// Removes mob from both lists in which it is contained.
 	// This method is used for when a mob dies.
 	public void removeObject(GameObject waste) {
-		for(GameObject w : objects) {
-			if(waste.equals(w)) {
-				System.out.print(waste.getClass().getSimpleName() + " is being removed from..");
-				if(enemies.remove(w)) { System.out.print(" Enemies"); }
-				if(rocks.remove(w)) { System.out.print(" Rocks"); }
-				if(objects.remove(w)) { System.out.print(" GameObjects"); }
-				System.out.println();
-				break;
+		ArrayList<GameObject> forRemoval = new ArrayList<GameObject>();
+		for(GameObject obj : objects) {
+			if(waste.equals(obj)) {
+				forRemoval.add(obj);
 			}
+		}
+
+		for(GameObject obj : forRemoval) {
+			System.out.print(obj.getClass().getSimpleName() + " is being removed from..");
+			if(enemies.remove(obj)) { System.out.print(" Enemies"); }
+			if(rocks.remove(obj)) { System.out.print(" Rocks"); }
+			if(objects.remove(obj)) { System.out.print(" GameObjects"); }
+			System.out.println();
 		}
 	}
 	

@@ -61,7 +61,9 @@ public class DungeonController implements KeyListener {
 					break;
 		case 120:
 			for(GameObject obj : game.getFloor().getObjects()) {
-				System.out.print(obj.getClass().getSimpleName() + " ");
+				if(obj instanceof AnimateObject) {
+					System.out.print(obj.getClass().getSimpleName() + " ");
+				}
 			}
 			System.out.println();
 			break;
