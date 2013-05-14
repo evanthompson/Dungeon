@@ -106,21 +106,23 @@ public class DungeonGame extends Observable {
 	}
 	
 	public void attack() {
-		ArrayList<Mob> targets = new ArrayList<Mob>();
+		ArrayList<GameObject> targets = new ArrayList<GameObject>();
 		for(Mob m : level.getEnemies()) {
 			if(level.overlapAt(m, hero.getCrosshair())) {
-				targets.add(m);
+				//targets.add(m);
+				m.damage(hero.getStrength() * 10);
+				if(m.getCurrHealth() <= 0) {
+					System.out.println("hero got " + m.getBooty() + " gil and " + m.getExperience() + " experience.");
+					hero.addBooty(m.getBooty());
+					hero.addExp(m.getExperience());
+					//level.removeObject(m);
+					targets.add(m);
+				}
 			}
 		}
-		for(Mob m : targets) {
-			m.damage(hero.getStrength() * 10);
-			if(m.getCurrHealth() <= 0) {
-				System.out.println("hero got " + m.getBooty() + " gil and " + m.getExperience() + " experience.");
-				hero.addBooty(m.getBooty());
-				hero.addExp(m.getExperience());
-				level.removeObject(m);
-			}
-		}
+		if(targets.size() > 0)
+			level.removeObjects(targets);
+		
 		updateGame();
 	}
 	

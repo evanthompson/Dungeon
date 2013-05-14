@@ -135,14 +135,15 @@ public class DungeonFloor {
 				forRemoval.add(obj);
 			}
 		}
-
-		for(GameObject obj : forRemoval) {
-			System.out.print(obj.getClass().getSimpleName() + " is being removed from..");
-			if(enemies.remove(obj)) { System.out.print(" Enemies"); }
-			if(rocks.remove(obj)) { System.out.print(" Rocks"); }
-			if(objects.remove(obj)) { System.out.print(" GameObjects"); }
-			System.out.println();
-		}
+		removeObjects(forRemoval);
+	}
+	
+	public void removeObjects(ArrayList<GameObject> list) {
+		System.out.print(list + " is being removed from..");
+		if(enemies.removeAll(list)) { System.out.print(" Enemies"); }
+		if(rocks.removeAll(list)) { System.out.print(" Rocks"); }
+		if(objects.removeAll(list)) { System.out.print(" GameObjects"); }
+		System.out.println();
 	}
 	
 	// Get Methods
