@@ -113,9 +113,12 @@ public class DungeonView implements Observer {
 		menu.addListener(SWT.Paint, new Listener () {
 			public void handleEvent (Event event) {
 				Hero hero = newGame.getHero();
-				event.gc.drawText(hero.getPos().x + "," + hero.getPos().y, 10, 10);
-				event.gc.drawText("Experience: " + hero.getExperience(), 10, 30);
-				event.gc.drawText("Money: " + hero.getBooty(), 10, 50);
+				int firstRow = 10;
+				int rowHeight = 20;
+				event.gc.drawText(hero.getPos().x + "," + hero.getPos().y, 10, firstRow);
+				event.gc.drawText("Speed: " + hero.getSpeed(), 10, firstRow += rowHeight);
+				event.gc.drawText("Experience: " + hero.getExperience(), 10, firstRow += rowHeight);
+				event.gc.drawText("Money: " + hero.getBooty(), 10, firstRow += rowHeight);
 			}
 		});
 		
@@ -174,6 +177,10 @@ public class DungeonView implements Observer {
 	
 	@Override
 	public void update(Observable obs, Object obj) {
+		if(shell.isDisposed()) {
+			System.out.println("Runnable: shell is disposed!");
+			return;
+		}
 		floor.redraw();
 		menu.redraw();
 	}

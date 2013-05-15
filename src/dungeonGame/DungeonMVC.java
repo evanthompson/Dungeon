@@ -16,12 +16,13 @@ public class DungeonMVC {
 		DungeonController controller = new DungeonController(shell);
 		controller.addModel(view.getGame());
 		controller.addView(view);
-		controller.startGame();
 		
 		view.addController(controller);
+		controller.startGame();
 		
 		shell.pack();
 		shell.open();
+		
 		while (!shell.isDisposed()) {
 			if (!display.readAndDispatch()) display.sleep();
 		}

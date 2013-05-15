@@ -11,6 +11,9 @@ public class AnimateObject extends GameObject {
 	protected int maxHealth, currHealth;
 	protected int strength, stride, reach;
 	
+	protected int maxSpeed, xVeloc, yVeloc, currSpeed;
+	private boolean acceleration = false;
+	
 	// Constructor
 	public AnimateObject() {
 		super();
@@ -30,11 +33,15 @@ public class AnimateObject extends GameObject {
 		strength = 1;
 		stride = 10;
 		reach = 20;
+		
+		maxSpeed = 30;
+		xVeloc = yVeloc = currSpeed = 0;
 	}
 	
 	private void initDirection() {
 		// Choose random starting direction
 		setDirection(Compass.values()[(int)(Math.random() * 3)]);
+		setCrosshair(direction);
 	}
 	
 	public void addToMaxHealth(int h) {
@@ -60,9 +67,20 @@ public class AnimateObject extends GameObject {
 	}
 	
 	// Set Methods
+	public void increaseSpeed(int inc) {
+		currSpeed = Math.min(maxSpeed, currSpeed + inc);
+	}
+	
+	public void decreaseSpeed(int dec) {
+		currSpeed = Math.max(0, currSpeed - dec);
+	}
+	
+	public void setSpeed(int speed) {
+		currSpeed = Math.min(maxSpeed, Math.max(0, speed));
+	}
+	
 	public void setDirection(Compass dir) {
 		direction = dir;
-		setCrosshair(dir);
 	}
 	public void setCrosshair(Compass dir) {
 		if(crosshair == null) {
@@ -86,6 +104,7 @@ public class AnimateObject extends GameObject {
 	public void setCurrHealth(int h) { currHealth = h; }
 	public void setStrength(int s) { strength = s; }
 	public void setStride(int s) { stride = s; }
+	public void setAccel(boolean accel) { acceleration = accel; }
 	
 	// Get Methods
 	public Compass getDirection() { return direction; }
@@ -94,4 +113,7 @@ public class AnimateObject extends GameObject {
 	public int getCurrHealth() { return currHealth; }
 	public int getStrength() { return strength;	}
 	public int getStride() { return stride;	}
+	public int getSpeed() { return currSpeed;	}
+	public int getMaxSpeed() { return maxSpeed;	}
+	public boolean getAccel() { return acceleration; }
 }

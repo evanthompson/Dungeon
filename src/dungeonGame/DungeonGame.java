@@ -27,6 +27,7 @@ public class DungeonGame extends Observable {
 	private DungeonFloor level;
 	private ArrayList<DungeonFloor> dungeon;
 	private int currLevel;
+	private boolean gameOver = false;
 	
 	public DungeonGame() {
 		currLevel = 0;
@@ -42,11 +43,80 @@ public class DungeonGame extends Observable {
 		}
 	}
 	
-	public void beginGame() {}
+	public void beginGame() {
+			if(hero.getAccel() == true) {
+				hero.increaseSpeed(1);
+			} else {
+				hero.decreaseSpeed(3);
+			}
+			setVelocity(hero);
+			hero.setCrosshair(hero.getDirection());
+			// check for new input
+			// modify game data with new input
+			// check for collisions
+			
+			updateGame();
+	}
 	
 	public void updateGame() {
 		setChanged();
 		notifyObservers();
+	}
+	
+	public void setVelocity(AnimateObject mover) {
+		switch(mover.getDirection()) {
+		case WEST:	move2(mover, -1, 0);
+					break;
+		case EAST:	move2(mover, 1, 0);
+					break;
+		case NORTH:	move2(mover, 0, -1);
+					break;
+		case SOUTH:	move2(mover, 0, 1);
+					break;
+		default:	System.out.println("setVelocity: default");
+		}
+	}
+	
+	public void move2(AnimateObject mover, int xFactor, int yFactor) {
+		int xSpeed = xFactor * mover.getSpeed();
+		int ySpeed = yFactor * mover.getSpeed();
+		if(xSpeed == 0 && ySpeed == 0) {
+			return;
+		}
+		
+		int xBefore = mover.getPos().x;
+		int yBefore = mover.getPos().y;
+		int xAfter = xBefore + xSpeed;
+		int yAfter = yBefore + ySpeed;
+		if(xFactor > 0) { xAfter += mover.SIZE; }
+		if(yFactor > 0) { yAfter += mover.SIZE; }
+		
+		if((xBefore <= 0 && xFactor < 0) || (xBefore + mover.SIZE >= level.MAP_WIDTH - 1 && xFactor > 0)) {
+			mover.setSpeed(0);
+		}
+		if((yBefore <= 0 && yFactor < 0) || (yBefore + mover.SIZE >= level.MAP_HEIGHT - 1 && yFactor > 0)) {
+			mover.setSpeed(0);
+		}
+		
+		Point upperPoint = new Point(xAfter + Math.abs(yFactor)*(mover.SIZE-1), 
+				yAfter + Math.abs(xFactor)*(mover.SIZE-1));
+		
+		for(GameObject obj : level.getObjects()) {
+			
+			int objX = obj.getPos().x;
+			int objY = obj.getPos().y;
+			if(level.overlapAt(obj, new Point(xAfter, yAfter)) || level.overlapAt(obj, upperPoint)) {
+				xSpeed = xFactor * Math.max(0, Math.min(Math.abs(xSpeed), Math.abs(xBefore - objX) - mover.SIZE));
+				ySpeed = yFactor * Math.max(0, Math.min(Math.abs(ySpeed), Math.abs(yBefore - objY) - mover.SIZE));
+				
+				if(xSpeed == 0 && ySpeed == 0) {
+					mover.setSpeed(0);
+					break;
+				}
+			}
+		}
+		mover.setXpos(Math.min(level.getMapWidth() - mover.SIZE, Math.max(0, mover.getPos().x + xSpeed)));
+		mover.setYpos(Math.min(level.getMapHeight() - mover.SIZE, Math.max(0, mover.getPos().y + ySpeed)));
 	}
 	
 	public void move(AnimateObject mover, int xFactor, int yFactor) {
@@ -67,7 +137,6 @@ public class DungeonGame extends Observable {
 			int objY = obj.getPos().y;
 			if(xStep == 0 && yStep == 0) { break; }
 			if(level.overlapAt(obj, new Point(xCheck, yCheck)) || level.overlapAt(obj, upperPoint)) {
-				// If obj instanceof stair --> go to vertical traversal
 				if(obj instanceof Stair) {
 					stairs = obj;
 				}
