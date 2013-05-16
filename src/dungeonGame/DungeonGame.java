@@ -109,12 +109,15 @@ public class DungeonGame extends Observable {
 		
 		Point upperPoint = new Point(xAfter + Math.abs(yFactor)*(mover.SIZE-1), 
 				yAfter + Math.abs(xFactor)*(mover.SIZE-1));
-		
+		GameObject stairs = null;
 		for(GameObject obj : level.getObjects()) {
 			
 			int objX = obj.getPos().x;
 			int objY = obj.getPos().y;
 			if(level.overlapAt(obj, new Point(xAfter, yAfter)) || level.overlapAt(obj, upperPoint)) {
+				if(obj instanceof Stair && mover instanceof Hero) {
+					stairs = obj;
+				}
 				xSpeed = xFactor * Math.max(0, Math.min(Math.abs(xSpeed), Math.abs(xBefore - objX) - mover.SIZE));
 				ySpeed = yFactor * Math.max(0, Math.min(Math.abs(ySpeed), Math.abs(yBefore - objY) - mover.SIZE));
 				
@@ -126,6 +129,7 @@ public class DungeonGame extends Observable {
 		}
 		mover.setXpos(Math.min(level.getMapWidth() - mover.SIZE, Math.max(0, mover.getPos().x + xSpeed)));
 		mover.setYpos(Math.min(level.getMapHeight() - mover.SIZE, Math.max(0, mover.getPos().y + ySpeed)));
+		moveFloors((Stair) stairs);
 	}
 	
 	public void move(AnimateObject mover, int xFactor, int yFactor) {
