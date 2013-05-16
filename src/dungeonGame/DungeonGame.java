@@ -44,18 +44,27 @@ public class DungeonGame extends Observable {
 	}
 	
 	public void beginGame() {
-			if(hero.getAccel() == true) {
-				hero.increaseSpeed(1);
+		// Hero Movement
+		if(hero.getAccel() == true) {
+			hero.increaseSpeed(1);
+		} else {
+			hero.decreaseSpeed(3);
+		}
+		setVelocity(hero);
+		hero.setCrosshair(hero.getDirection());
+		
+		// Enemy Movement
+		for(Mob m : level.getEnemies()) {
+			if(Math.round(Math.random() * 9) >= 7) {
+				m.increaseSpeed(1);
+				m.setDirection(Compass.values()[(int)(Math.random() * 3)]);
 			} else {
-				hero.decreaseSpeed(3);
+				m.decreaseSpeed(3);
 			}
-			setVelocity(hero);
-			hero.setCrosshair(hero.getDirection());
-			// check for new input
-			// modify game data with new input
-			// check for collisions
-			
-			updateGame();
+			setVelocity(m);
+		}
+		
+		updateGame();
 	}
 	
 	public void updateGame() {
@@ -137,7 +146,7 @@ public class DungeonGame extends Observable {
 			int objY = obj.getPos().y;
 			if(xStep == 0 && yStep == 0) { break; }
 			if(level.overlapAt(obj, new Point(xCheck, yCheck)) || level.overlapAt(obj, upperPoint)) {
-				if(obj instanceof Stair) {
+				if(obj instanceof Stair && mover instanceof Hero) {
 					stairs = obj;
 				}
 				xStep = xFactor * Math.max(0, Math.min(Math.abs(xStep), Math.abs(xpos - objX) - mover.SIZE));

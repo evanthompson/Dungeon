@@ -29,7 +29,6 @@ public class DungeonController implements KeyListener {
 	}
 
 	public void startGame() {
-		//game.beginGame();
 		
 		timer = new Runnable() {
 			public void run() {
@@ -37,18 +36,7 @@ public class DungeonController implements KeyListener {
 					System.out.println("Runnable: shell is disposed!");
 					return;
 				}
-				/*
-				game.setVelocity(game.getHero());
-				for(Mob m : game.getFloor().getEnemies()) {
-					switch(Compass.values()[(int)(Math.random() * 3)]) {
-					case WEST:	game.move(m, -1, 0); 	break;
-					case EAST:	game.move(m, 1, 0);		break;
-					case NORTH:	game.move(m, 0, -1);	break;
-					case SOUTH:	game.move(m, 0, 1);		break;
-					default:	game.move(m, 0, 1);
-					}
-				}
-				*/
+				
 				game.beginGame();
 				
 				shell.getDisplay().timerExec(DELAY, timer);
@@ -61,10 +49,6 @@ public class DungeonController implements KeyListener {
 	@Override
 	public void keyPressed(KeyEvent e) {
 		switch(e.keyCode) {
-		//case 97:	game.move(game.getHero(), -1, 0); 	/* WEST */	break;
-		//case 100:	game.move(game.getHero(), 1, 0);	/* EAST */	break;
-		//case 119:	game.move(game.getHero(), 0, -1);	/* NORTH */	break;
-		//case 115:	game.move(game.getHero(), 0, 1);	/* SOUTH */	break;
 		case 97:	game.getHero().setAccel(true);
 					game.getHero().setDirection(Compass.WEST);
 					break;
