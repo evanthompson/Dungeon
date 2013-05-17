@@ -69,8 +69,8 @@ public class DungeonController implements KeyListener {
 					break;
 		default:
 		}
-		
 	}
+	
 	@Override
 	public void keyReleased(KeyEvent e) {
 		switch(e.keyCode){
@@ -83,6 +83,7 @@ public class DungeonController implements KeyListener {
 		case 115:	game.keyFlagsHelper(Compass.SOUTH, false);
 					break;
 		default:
+			
 		}
 	}
 	
