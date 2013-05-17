@@ -58,4 +58,5 @@ public class Hero extends AnimateObject {
 	public int getExperience() { return experience; }
 	public int getBooty() { return booty; }
 	public int getCLevel() { return cLevel; }
+	
 }

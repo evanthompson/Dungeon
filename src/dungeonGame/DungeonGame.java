@@ -3,7 +3,6 @@ package dungeonGame;
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Observable;
 import java.util.TreeMap;
 
@@ -32,7 +31,6 @@ public class DungeonGame extends Observable {
 	private ArrayList<DungeonFloor> dungeon;
 	private int currLevel;
 	private boolean gameOver = false;
-	private boolean overLoad = false;
 	
 	public DungeonGame() {
 		currLevel = 0;
@@ -61,7 +59,12 @@ public class DungeonGame extends Observable {
 			hero.decreaseSpeed(5);
 		}
 		
-		setVelocity(hero);
+		if(keyFlags.get(Compass.NORTH)){ move2(hero, 0, -1); }
+        if(keyFlags.get(Compass.SOUTH)){ move2(hero, 0, 1); }
+        if(keyFlags.get(Compass.WEST)){ move2(hero, -1, 0); }
+        if(keyFlags.get(Compass.EAST)){ move2(hero, 1, 0); }
+		
+		//setVelocity(hero);
 		hero.setCrosshair(hero.getDirection());
 		
 		// Enemy Movement
@@ -84,28 +87,8 @@ public class DungeonGame extends Observable {
 	}
 	
 	public void keyFlagsHelper(Compass dir, boolean accel) {
-		if(accel) {
-			keyFlags.put(dir, true);
-		} else {
-			if(overLoad == true) {
-				overLoad = false;
-			} else {
-				keyFlags.put(dir, false);
-			}
-			
-		}
-		
+		keyFlags.put(dir, accel);
 		if(accel) hero.setDirection(dir);
-		
-		if(accel) {
-			for(Entry<Compass, Boolean> c : keyFlags.entrySet()) {
-				if(c.getKey() != hero.getDirection() && c.getValue() == true) {
-					keyFlags.put(c.getKey(), false);
-					overLoad = true;
-					System.out.println(hero.getDirection() + " != " + c.getKey());
-				}
-			}
-		}
 		
 		if(keyFlags.containsValue(true)) {
 			hero.setAccel(true);
@@ -124,7 +107,6 @@ public class DungeonGame extends Observable {
 					break;
 		case SOUTH:	move2(mover, 0, 1);
 					break;
-		default:	System.out.println("setVelocity: default");
 		}
 	}
 	

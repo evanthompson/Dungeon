@@ -1,5 +1,6 @@
 package dungeonGame;
 
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.widgets.Display;
@@ -47,16 +48,16 @@ public class DungeonController implements KeyListener {
 	@Override
 	public void keyPressed(KeyEvent e) {
 		switch(e.keyCode) {
-		case 97:	game.keyFlagsHelper(Compass.WEST, true);
-					break;
-		case 100:	game.keyFlagsHelper(Compass.EAST, true);
-					break;
-		case 119:	game.keyFlagsHelper(Compass.NORTH, true);
-					break;
-		case 115:	game.keyFlagsHelper(Compass.SOUTH, true);
-					break;
-		case 122:	game.attack();
-					break;
+		case SWT.ARROW_LEFT:
+			game.keyFlagsHelper(Compass.WEST, true); break;
+		case SWT.ARROW_RIGHT:
+			game.keyFlagsHelper(Compass.EAST, true); break;
+		case SWT.ARROW_UP:
+			game.keyFlagsHelper(Compass.NORTH, true); break;
+		case SWT.ARROW_DOWN:
+			game.keyFlagsHelper(Compass.SOUTH, true); break;
+		case 122:
+			game.attack(); break;
 		case 120:
 			for(GameObject obj : game.getFloor().getObjects()) {
 				if(obj instanceof AnimateObject) {
@@ -65,28 +66,23 @@ public class DungeonController implements KeyListener {
 			}
 			System.out.println();
 			break;
-		case 99:	System.out.println(e.keyCode);
-					break;
-		default:
+		case 99:
+			System.out.println(e.keyCode); break;
 		}
 	}
 	
 	@Override
 	public void keyReleased(KeyEvent e) {
 		switch(e.keyCode){
-		case 97:	game.keyFlagsHelper(Compass.WEST, false);
-					break;
-		case 100:	game.keyFlagsHelper(Compass.EAST, false);
-					break;
-		case 119:	game.keyFlagsHelper(Compass.NORTH, false);
-					break;
-		case 115:	game.keyFlagsHelper(Compass.SOUTH, false);
-					break;
-		default:
-			
+		case SWT.ARROW_LEFT:
+			game.keyFlagsHelper(Compass.WEST, false); break;
+		case SWT.ARROW_RIGHT:
+			game.keyFlagsHelper(Compass.EAST, false); break;
+		case SWT.ARROW_UP:
+			game.keyFlagsHelper(Compass.NORTH, false); break;
+		case SWT.ARROW_DOWN:
+			game.keyFlagsHelper(Compass.SOUTH, false); break;
 		}
 	}
-	
-	
 	
 }
