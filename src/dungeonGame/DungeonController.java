@@ -8,12 +8,12 @@ import org.eclipse.swt.widgets.Shell;
 import dungeonGame.DungeonGame.Compass;
 
 public class DungeonController implements KeyListener {
-
+	
 	private DungeonGame game;
 	@SuppressWarnings("unused")
 	private DungeonView view;
 	private Runnable timer;
-	private final int DELAY = 100;
+	private final int DELAY = 50;
 	private Shell shell;
 	
 	public DungeonController(Shell s) {
@@ -37,29 +37,23 @@ public class DungeonController implements KeyListener {
 					return;
 				}
 				
-				game.beginGame();
-				
+				game.runGame();
 				shell.getDisplay().timerExec(DELAY, timer);
 			}
 		};
 		Display.getDefault().timerExec(DELAY, timer);
-		
 	}
 	
 	@Override
 	public void keyPressed(KeyEvent e) {
 		switch(e.keyCode) {
-		case 97:	game.getHero().setAccel(true);
-					game.getHero().setDirection(Compass.WEST);
+		case 97:	game.keyFlagsHelper(Compass.WEST, true);
 					break;
-		case 100:	game.getHero().setAccel(true);
-					game.getHero().setDirection(Compass.EAST);
+		case 100:	game.keyFlagsHelper(Compass.EAST, true);
 					break;
-		case 119:	game.getHero().setAccel(true);
-					game.getHero().setDirection(Compass.NORTH);
+		case 119:	game.keyFlagsHelper(Compass.NORTH, true);
 					break;
-		case 115:	game.getHero().setAccel(true);
-					game.getHero().setDirection(Compass.SOUTH);
+		case 115:	game.keyFlagsHelper(Compass.SOUTH, true);
 					break;
 		case 122:	game.attack();
 					break;
@@ -73,12 +67,25 @@ public class DungeonController implements KeyListener {
 			break;
 		case 99:	System.out.println(e.keyCode);
 					break;
-		default:	System.out.println("not supported");
+		default:
 		}
+		
 	}
 	@Override
 	public void keyReleased(KeyEvent e) {
-		game.getHero().setAccel(false);
+		switch(e.keyCode){
+		case 97:	game.keyFlagsHelper(Compass.WEST, false);
+					break;
+		case 100:	game.keyFlagsHelper(Compass.EAST, false);
+					break;
+		case 119:	game.keyFlagsHelper(Compass.NORTH, false);
+					break;
+		case 115:	game.keyFlagsHelper(Compass.SOUTH, false);
+					break;
+		default:
+		}
 	}
+	
+	
 	
 }

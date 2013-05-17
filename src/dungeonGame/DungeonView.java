@@ -117,6 +117,8 @@ public class DungeonView implements Observer {
 				int rowHeight = 20;
 				event.gc.drawText(hero.getPos().x + "," + hero.getPos().y, 10, firstRow);
 				event.gc.drawText("Speed: " + hero.getSpeed(), 10, firstRow += rowHeight);
+				event.gc.drawText("keyFlags: " + newGame.keyFlags.values() , 10, firstRow += rowHeight);
+				event.gc.drawText("accelerators: " + hero.getAccelerator(), 10, firstRow += rowHeight);
 				event.gc.drawText("Experience: " + hero.getExperience(), 10, firstRow += rowHeight);
 				event.gc.drawText("Money: " + hero.getBooty(), 10, firstRow += rowHeight);
 			}

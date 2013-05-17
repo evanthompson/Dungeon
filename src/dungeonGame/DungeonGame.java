@@ -2,7 +2,10 @@ package dungeonGame;
 
 import java.awt.Point;
 import java.util.ArrayList;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Observable;
+import java.util.TreeMap;
 
 public class DungeonGame extends Observable {
 	/* 
@@ -22,18 +25,25 @@ public class DungeonGame extends Observable {
 				Each Floor must be remembered
 	 */
 	
+	public Map<Compass, Boolean> keyFlags;
 	public enum Compass { NORTH, WEST, EAST, SOUTH }
 	private Hero hero;
 	private DungeonFloor level;
 	private ArrayList<DungeonFloor> dungeon;
 	private int currLevel;
 	private boolean gameOver = false;
+	private boolean overLoad = false;
 	
 	public DungeonGame() {
 		currLevel = 0;
 		dungeon = new ArrayList<DungeonFloor>();
 		dungeon.add(new DungeonFloor(currLevel));
 		level = dungeon.get(currLevel);
+		
+		keyFlags = new TreeMap<Compass, Boolean>();
+		for(Compass c : Compass.values()) {
+			keyFlags.put(c, false);
+		}
 		
 		// Hero Generation
 		Point heroStart = level.findFreePoint();
@@ -43,23 +53,24 @@ public class DungeonGame extends Observable {
 		}
 	}
 	
-	public void beginGame() {
+	public void runGame() {
 		// Hero Movement
 		if(hero.getAccel() == true) {
-			hero.increaseSpeed(1);
+			hero.increaseSpeed(5);
 		} else {
-			hero.decreaseSpeed(3);
+			hero.decreaseSpeed(5);
 		}
+		
 		setVelocity(hero);
 		hero.setCrosshair(hero.getDirection());
 		
 		// Enemy Movement
 		for(Mob m : level.getEnemies()) {
 			if(Math.round(Math.random() * 9) >= 7) {
-				m.increaseSpeed(1);
+				m.increaseSpeed(3);
 				m.setDirection(Compass.values()[(int)(Math.random() * 3)]);
 			} else {
-				m.decreaseSpeed(3);
+				m.decreaseSpeed(5);
 			}
 			setVelocity(m);
 		}
@@ -70,6 +81,37 @@ public class DungeonGame extends Observable {
 	public void updateGame() {
 		setChanged();
 		notifyObservers();
+	}
+	
+	public void keyFlagsHelper(Compass dir, boolean accel) {
+		if(accel) {
+			keyFlags.put(dir, true);
+		} else {
+			if(overLoad == true) {
+				overLoad = false;
+			} else {
+				keyFlags.put(dir, false);
+			}
+			
+		}
+		
+		if(accel) hero.setDirection(dir);
+		
+		if(accel) {
+			for(Entry<Compass, Boolean> c : keyFlags.entrySet()) {
+				if(c.getKey() != hero.getDirection() && c.getValue() == true) {
+					keyFlags.put(c.getKey(), false);
+					overLoad = true;
+					System.out.println(hero.getDirection() + " != " + c.getKey());
+				}
+			}
+		}
+		
+		if(keyFlags.containsValue(true)) {
+			hero.setAccel(true);
+		} else {
+			hero.setAccel(false);
+		}
 	}
 	
 	public void setVelocity(AnimateObject mover) {

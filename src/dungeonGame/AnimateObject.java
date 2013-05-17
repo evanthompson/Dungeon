@@ -11,7 +11,7 @@ public class AnimateObject extends GameObject {
 	protected int maxHealth, currHealth;
 	protected int strength, stride, reach;
 	
-	protected int maxSpeed, xVeloc, yVeloc, currSpeed;
+	protected int maxSpeed, currSpeed, accelerators;
 	private boolean acceleration = false;
 	
 	// Constructor
@@ -34,8 +34,8 @@ public class AnimateObject extends GameObject {
 		stride = 10;
 		reach = 20;
 		
-		maxSpeed = 30;
-		xVeloc = yVeloc = currSpeed = 0;
+		maxSpeed = 15;
+		accelerators = currSpeed = 0;
 	}
 	
 	private void initDirection() {
@@ -100,6 +100,9 @@ public class AnimateObject extends GameObject {
 		}
 	}
 	
+	public void accelerate() { accelerators++; }
+	public void decelerate() { accelerators--; }
+	
 	public void setMaxHealth(int h) { maxHealth = h; }
 	public void setCurrHealth(int h) { currHealth = h; }
 	public void setStrength(int s) { strength = s; }
@@ -116,4 +119,5 @@ public class AnimateObject extends GameObject {
 	public int getSpeed() { return currSpeed;	}
 	public int getMaxSpeed() { return maxSpeed;	}
 	public boolean getAccel() { return acceleration; }
+	public int getAccelerator() { return accelerators; }
 }
