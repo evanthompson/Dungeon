@@ -47,6 +47,7 @@ public class DungeonController implements KeyListener {
 	
 	@Override
 	public void keyPressed(KeyEvent e) {
+		
 		switch(e.keyCode) {
 		case SWT.ARROW_LEFT:
 			game.keyFlagsHelper(Compass.WEST, true); break;
