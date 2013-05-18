@@ -188,6 +188,7 @@ public class DungeonView implements Observer {
 	
 	public void addController(DungeonController controller) {
 		shell.addKeyListener(controller);
+		
 	}
 	
 	public DungeonGame getGame() { return newGame; }
