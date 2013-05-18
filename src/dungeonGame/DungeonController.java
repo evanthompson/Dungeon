@@ -52,6 +52,7 @@ public class DungeonController implements KeyListener {
 			case SWT.SPACE:			game.togglePause(); break;
 			case SWT.ARROW_UP:		game.traverseMenu(false); break;
 			case SWT.ARROW_DOWN:	game.traverseMenu(true); break;
+			case SWT.CR:			game.quitGame();
 			}
 			return;
 		}

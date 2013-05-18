@@ -64,6 +64,9 @@ public class DungeonGame extends Observable {
 	}
 	
 	public void runGame() {
+		if(gameOver) {
+			exitGame();
+		}
 		if(paused) {
 			return;
 		}
@@ -114,6 +117,11 @@ public class DungeonGame extends Observable {
 	public void updateGame() {
 		setChanged();
 		notifyObservers();
+	}
+	
+	public void exitGame() {
+		System.out.println("exiting game");
+		System.exit(0);
 	}
 	
 	public void decideAccel(Compass dir, boolean accel) {
@@ -186,41 +194,6 @@ public class DungeonGame extends Observable {
 		moveFloors((Stair) stairs);
 	}
 	
-	public void move(AnimateObject mover, int xFactor, int yFactor) {
-		GameObject stairs = null;
-		int xStep = xFactor * mover.getStride();
-		int yStep = yFactor * mover.getStride();
-		int xCheck = mover.getPos().x + xStep;
-		int yCheck = mover.getPos().y + yStep;
-		if(xFactor > 0) { xCheck += mover.SIZE; }
-		if(yFactor > 0) { yCheck += mover.SIZE; }
-		int xpos = mover.getPos().x;
-		int ypos = mover.getPos().y;
-		
-		Point upperPoint = new Point(xCheck + Math.abs(yFactor)*(mover.SIZE-1), 
-				yCheck + Math.abs(xFactor)*(mover.SIZE-1));
-		for(GameObject obj : level.getObjects()) {
-			int objX = obj.getPos().x;
-			int objY = obj.getPos().y;
-			if(xStep == 0 && yStep == 0) { break; }
-			if(level.overlapAt(obj, new Point(xCheck, yCheck)) || level.overlapAt(obj, upperPoint)) {
-				if(obj instanceof Stair && mover instanceof Hero) {
-					stairs = obj;
-				}
-				xStep = xFactor * Math.max(0, Math.min(Math.abs(xStep), Math.abs(xpos - objX) - mover.SIZE));
-				yStep = yFactor * Math.max(0, Math.min(Math.abs(yStep), Math.abs(ypos - objY) - mover.SIZE));
-			}
-		}
-		mover.setXpos(Math.min(level.getMapWidth() - mover.SIZE, Math.max(0, mover.getPos().x + xStep)));
-		mover.setYpos(Math.min(level.getMapHeight() - mover.SIZE, Math.max(0, mover.getPos().y + yStep)));
-		int dirNum = (2 * (yFactor + 1)) + xFactor;
-		if(dirNum >= 3) dirNum--;
-		mover.setDirection(Compass.values()[dirNum]);
-		
-		moveFloors((Stair) stairs);
-		updateGame();
-	}
-	
 	public void moveFloors(Stair stairs) {
 		if(stairs == null) return;
 		
@@ -265,6 +238,10 @@ public class DungeonGame extends Observable {
 	public void togglePause() {
 		paused = !paused;
 		updateGame();
+	}
+	public void quitGame() {
+		if(menuSelection == menuOptions.get(menuOptions.size() - 1))
+			gameOver = true;
 	}
 	
 	// Get Methods
