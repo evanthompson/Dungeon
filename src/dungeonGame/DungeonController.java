@@ -68,6 +68,8 @@ public class DungeonController implements KeyListener {
 			break;
 		case 99:
 			System.out.println(e.keyCode); break;
+		case SWT.SPACE:
+			game.togglePause();
 		}
 	}
 	

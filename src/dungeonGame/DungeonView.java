@@ -107,6 +107,11 @@ public class DungeonView implements Observer {
 				event.gc.setBackground(event.display.getSystemColor(SWT.COLOR_YELLOW));
 				event.gc.fillOval(heroObj.getCrosshair().x - (width / 2), heroObj.getCrosshair().y  - (width / 2), width, width);
 				
+				if(newGame.isGamePaused()) {
+					event.gc.setBackground(dGray);
+					event.gc.drawText("Game Paused", floor.getBounds().x + 200, floor.getBounds().y, false);
+				}
+				
 			}
 		});
 		

@@ -30,9 +30,10 @@ public class DungeonGame extends Observable {
 	private DungeonFloor level;
 	private ArrayList<DungeonFloor> dungeon;
 	private int currLevel;
-	private boolean gameOver = false;
+	private boolean gameOver, paused;
 	
 	public DungeonGame() {
+		paused = false;
 		currLevel = 0;
 		dungeon = new ArrayList<DungeonFloor>();
 		dungeon.add(new DungeonFloor(currLevel));
@@ -52,6 +53,10 @@ public class DungeonGame extends Observable {
 	}
 	
 	public void runGame() {
+		if(paused) {
+			return;
+		}
+		
 		// Hero Movement
 		if(hero.getAccel() == true) {
 			hero.increaseSpeed(5);
@@ -232,7 +237,13 @@ public class DungeonGame extends Observable {
 		updateGame();
 	}
 	
+	public void togglePause() {
+		paused = !paused;
+		updateGame();
+	}
+	
 	// Get Methods
 	public Hero getHero() { return hero; }
 	public DungeonFloor getFloor() { return level; }
+	public Boolean isGamePaused() { return paused; }
 }
