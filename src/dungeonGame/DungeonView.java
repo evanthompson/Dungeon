@@ -23,16 +23,16 @@ import org.eclipse.swt.widgets.Shell;
 public class DungeonView implements Observer {
 	private ArrayList<Resource> cleanUp;
 	private Color dGray, gray, lGray;
-	private Image rock, goo, hero, stairsUp, stairsDown/*, floorTexture*/;
-	private DungeonGame newGame;
+	private Image rock, goo, hero, stairsUp, stairsDown;
+	private DungeonGame game;
 	
 	private Shell shell;
 	private Canvas floor;
 	private Composite menu;
 	
 	public DungeonView(Shell s) {
-		newGame = new DungeonGame();
-		newGame.addObserver(this);
+		game = new DungeonGame();
+		game.addObserver(this);
 		this.shell = s;
 		
 		cleanUp = new ArrayList<Resource>(10);
@@ -49,9 +49,6 @@ public class DungeonView implements Observer {
 		// Floor Initialization
 		floor = new Canvas(shell, SWT.NONE);
 		floor.setBackground(gray);
-		//floorTexture = new Image(shell.getDisplay(), DungeonView.class.getResourceAsStream("images/premade_tile_single.png"));
-		//floor.setBackgroundImage(floorTexture);
-		
 		
 		data = new GridData();
 		data.horizontalAlignment = SWT.BEGINNING;
@@ -70,59 +67,23 @@ public class DungeonView implements Observer {
 		data.widthHint = 200;
 		menu.setLayoutData(data);
 		
-		// Paint Listener ///////////
+		// Paint Listener - Floor
 		floor.addListener(SWT.Paint, new Listener () {
-			public void handleEvent(Event event) {
-				ArrayList<GameObject> objects = newGame.getFloor().getObjects();
-				int unit = newGame.getFloor().UNIT_SIZE;
-				for(GameObject obj : objects) {
-					String life = "";
-					if(obj instanceof Mob) {
-						event.gc.drawImage(goo, obj.getPos().x, obj.getPos().y);
-						life = ((Mob) obj).getCurrHealth() + " / " + ((Mob) obj).getMaxHealth();
-						event.gc.setForeground(event.display.getSystemColor(SWT.COLOR_WHITE));
-						event.gc.drawText(life, obj.getPos().x + 5, obj.getPos().y + 5, true);
-					}
-					else if(obj instanceof Obstacle) {
-						event.gc.drawImage(rock, obj.getPos().x, obj.getPos().y);
-						life = "";
-					} 
-					else if(obj instanceof Stair) {
-						if(((Stair) obj).getDescent() == true) {
-							event.gc.drawImage(stairsDown, obj.getPos().x, obj.getPos().y);
-						} else { event.gc.drawImage(stairsUp, obj.getPos().x, obj.getPos().y); }
-					}
-					else if(!(obj instanceof Hero)) {
-						event.gc.setBackground(event.display.getSystemColor(SWT.COLOR_YELLOW));
-						event.gc.fillRectangle(obj.getPos().x, obj.getPos().y, unit, unit);
-					}
-				}
-				
-				// Drawing Hero
-				Hero heroObj = newGame.getHero();
-				event.gc.drawImage(hero, heroObj.getPos().x, heroObj.getPos().y);
-				
-				// Drawing Hero range indicator
-				int width = unit / 4;
-				event.gc.setBackground(event.display.getSystemColor(SWT.COLOR_YELLOW));
-				event.gc.fillOval(heroObj.getCrosshair().x - (width / 2), heroObj.getCrosshair().y  - (width / 2), width, width);
-				
-				if(newGame.isGamePaused()) {
-					event.gc.setBackground(dGray);
-					event.gc.drawText("Game Paused", floor.getBounds().x + 200, floor.getBounds().y, false);
-				}
-				
+			public void handleEvent(Event e) {
+				drawObjects(e);
+				drawHero(e);
+				drawMenu(e);
 			}
 		});
-		
+		// Paint Listener - Menu
 		menu.addListener(SWT.Paint, new Listener () {
 			public void handleEvent (Event event) {
-				Hero hero = newGame.getHero();
+				Hero hero = game.getHero();
 				int firstRow = 10;
 				int rowHeight = 20;
 				event.gc.drawText(hero.getPos().x + "," + hero.getPos().y, 10, firstRow);
 				event.gc.drawText("Speed: " + hero.getSpeed(), 10, firstRow += rowHeight);
-				event.gc.drawText("keyFlags: " + newGame.keyFlags.values() , 10, firstRow += rowHeight);
+				event.gc.drawText("keyFlags: " + game.keyFlags.values() , 10, firstRow += rowHeight);
 				event.gc.drawText("Experience: " + hero.getExperience(), 10, firstRow += rowHeight);
 				event.gc.drawText("Money: " + hero.getBooty(), 10, firstRow += rowHeight);
 			}
@@ -137,6 +98,50 @@ public class DungeonView implements Observer {
 			}
 		});
 		
+	}
+	
+	public void drawObjects(Event e) {
+		ArrayList<GameObject> objects = game.getFloor().getObjects();
+		for(GameObject obj : objects) {
+			int size = obj.SIZE;
+			if(obj instanceof Mob) {
+				String life = ((Mob) obj).getCurrHealth() + " / " + ((Mob) obj).getMaxHealth();
+				e.gc.drawImage(goo, obj.getPos().x, obj.getPos().y);
+				e.gc.setForeground(e.display.getSystemColor(SWT.COLOR_WHITE));
+				e.gc.drawText(life, obj.getPos().x + 5, obj.getPos().y + 5, true);
+			}
+			else if(obj instanceof Obstacle) {
+				e.gc.drawImage(rock, obj.getPos().x, obj.getPos().y);
+			} 
+			else if(obj instanceof Stair) {
+				if(((Stair) obj).getDescent() == true) {
+					e.gc.drawImage(stairsDown, obj.getPos().x, obj.getPos().y);
+				} else { e.gc.drawImage(stairsUp, obj.getPos().x, obj.getPos().y); }
+			}
+			else if(!(obj instanceof Hero)) {
+				e.gc.setBackground(e.display.getSystemColor(SWT.COLOR_YELLOW));
+				e.gc.fillRectangle(obj.getPos().x, obj.getPos().y, size, size);
+			}
+		}
+	}
+	
+	public void drawHero(Event e) {
+		// Drawing Hero
+		Hero heroObj = game.getHero();
+		e.gc.drawImage(hero, heroObj.getPos().x, heroObj.getPos().y);
+		
+		// Drawing Hero range indicator
+		int size = heroObj.SIZE;
+		int width = size / 4;
+		e.gc.setBackground(e.display.getSystemColor(SWT.COLOR_YELLOW));
+		e.gc.fillOval(heroObj.getCrosshair().x - (width / 2), heroObj.getCrosshair().y  - (width / 2), width, width);
+	}
+	
+	public void drawMenu(Event e) {
+		if(game.isGamePaused()) {
+			e.gc.setBackground(dGray);
+			e.gc.drawText("Game Paused", floor.getBounds().x + 200, floor.getBounds().y, false);
+		}
 	}
 	
 	public void makeColors() {
@@ -184,7 +189,7 @@ public class DungeonView implements Observer {
 	@Override
 	public void update(Observable obs, Object obj) {
 		if(shell.isDisposed()) {
-			System.out.println("Runnable: shell is disposed!");
+			System.out.println("Update: shell is disposed!");
 			return;
 		}
 		floor.redraw();
@@ -193,9 +198,8 @@ public class DungeonView implements Observer {
 	
 	public void addController(DungeonController controller) {
 		shell.addKeyListener(controller);
-		
 	}
 	
-	public DungeonGame getGame() { return newGame; }
+	public DungeonGame getGame() { return game; }
 
 }
