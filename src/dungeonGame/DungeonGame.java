@@ -2,8 +2,11 @@ package dungeonGame;
 
 import java.awt.Point;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Observable;
+import java.util.SortedMap;
 import java.util.TreeMap;
 
 public class DungeonGame extends Observable {
@@ -23,13 +26,15 @@ public class DungeonGame extends Observable {
 				Contact with exit loads next floor
 				Each Floor must be remembered
 	 */
-	
-	public Map<Compass, Boolean> keyFlags;
 	public enum Compass { NORTH, WEST, EAST, SOUTH }
+	public Map<Compass, Boolean> keyFlags;
+	public ArrayList<String> menuOptions;
+	
 	private Hero hero;
 	private DungeonFloor level;
 	private ArrayList<DungeonFloor> dungeon;
 	private int currLevel;
+	private String menuSelection;
 	private boolean gameOver, paused;
 	
 	public DungeonGame() {
@@ -43,6 +48,12 @@ public class DungeonGame extends Observable {
 		for(Compass c : Compass.values()) {
 			keyFlags.put(c, false);
 		}
+		
+		menuOptions = new ArrayList<String>();
+		menuOptions.add("Load Game");
+		menuOptions.add("Save Game");
+		menuOptions.add("Quit Game");
+		menuSelection = menuOptions.get(0);	// First element
 		
 		// Hero Generation
 		Point heroStart = level.findFreePoint();
@@ -86,12 +97,26 @@ public class DungeonGame extends Observable {
 		updateGame();
 	}
 	
+	public void traverseMenu(boolean nextItem) {
+		for(int i = 0; i < menuOptions.size(); i++) {
+			if(menuOptions.get(i) == menuSelection) {
+				if(nextItem && (i + 1 < menuOptions.size())) {
+					menuSelection = menuOptions.get(i + 1);
+				} else if((!nextItem) && (i - 1 >= 0)) {
+					menuSelection = menuOptions.get(i - 1);
+				}
+				break;
+			}
+		}
+		updateGame();
+	}
+	
 	public void updateGame() {
 		setChanged();
 		notifyObservers();
 	}
 	
-	public void keyFlagsHelper(Compass dir, boolean accel) {
+	public void decideAccel(Compass dir, boolean accel) {
 		keyFlags.put(dir, accel);
 		if(accel) hero.setDirection(dir);
 		
@@ -246,4 +271,5 @@ public class DungeonGame extends Observable {
 	public Hero getHero() { return hero; }
 	public DungeonFloor getFloor() { return level; }
 	public Boolean isGamePaused() { return paused; }
+	public String getMenuSelection() { return menuSelection; }
 }

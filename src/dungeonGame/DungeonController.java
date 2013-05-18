@@ -47,12 +47,21 @@ public class DungeonController implements KeyListener {
 	
 	@Override
 	public void keyPressed(KeyEvent e) {
+		if(game.isGamePaused()) {
+			switch(e.keyCode) {
+			case SWT.SPACE:			game.togglePause(); break;
+			case SWT.ARROW_UP:		game.traverseMenu(false); break;
+			case SWT.ARROW_DOWN:	game.traverseMenu(true); break;
+			}
+			return;
+		}
+		
 		switch(e.keyCode) {
 		case SWT.SPACE:			game.togglePause(); break;
-		case SWT.ARROW_LEFT:	game.keyFlagsHelper(Compass.WEST, true); break;
-		case SWT.ARROW_RIGHT:	game.keyFlagsHelper(Compass.EAST, true); break;
-		case SWT.ARROW_UP:		game.keyFlagsHelper(Compass.NORTH, true); break;
-		case SWT.ARROW_DOWN:	game.keyFlagsHelper(Compass.SOUTH, true); break;
+		case SWT.ARROW_LEFT:	game.decideAccel(Compass.WEST, true); break;
+		case SWT.ARROW_RIGHT:	game.decideAccel(Compass.EAST, true); break;
+		case SWT.ARROW_UP:		game.decideAccel(Compass.NORTH, true); break;
+		case SWT.ARROW_DOWN:	game.decideAccel(Compass.SOUTH, true); break;
 		
 		case 122:	game.attack(); break;
 		case 120:	for(GameObject obj : game.getFloor().getObjects()) {
@@ -63,24 +72,28 @@ public class DungeonController implements KeyListener {
 					System.out.println();
 					break;
 		case 99:	System.out.println(e.keyCode); break;
-		case 97:	game.keyFlagsHelper(Compass.WEST, true); break;
-		case 100:	game.keyFlagsHelper(Compass.EAST, true); break;
-		case 119:	game.keyFlagsHelper(Compass.NORTH, true); break;
-		case 115:	game.keyFlagsHelper(Compass.SOUTH, true); break;
+		case 97:	game.decideAccel(Compass.WEST, true); break;
+		case 100:	game.decideAccel(Compass.EAST, true); break;
+		case 119:	game.decideAccel(Compass.NORTH, true); break;
+		case 115:	game.decideAccel(Compass.SOUTH, true); break;
 		}
 	}
 	
 	@Override
 	public void keyReleased(KeyEvent e) {
+		if(game.isGamePaused()) {
+			return;
+		}
+		
 		switch(e.keyCode){
-		case SWT.ARROW_LEFT:	game.keyFlagsHelper(Compass.WEST, false); break;
-		case SWT.ARROW_RIGHT:	game.keyFlagsHelper(Compass.EAST, false); break;
-		case SWT.ARROW_UP:		game.keyFlagsHelper(Compass.NORTH, false); break;
-		case SWT.ARROW_DOWN:	game.keyFlagsHelper(Compass.SOUTH, false); break;
-		case 97:	game.keyFlagsHelper(Compass.WEST, false); break;
-		case 100:	game.keyFlagsHelper(Compass.EAST, false); break;
-		case 119:	game.keyFlagsHelper(Compass.NORTH, false); break;
-		case 115:	game.keyFlagsHelper(Compass.SOUTH, false); break;
+		case SWT.ARROW_LEFT:	game.decideAccel(Compass.WEST, false); break;
+		case SWT.ARROW_RIGHT:	game.decideAccel(Compass.EAST, false); break;
+		case SWT.ARROW_UP:		game.decideAccel(Compass.NORTH, false); break;
+		case SWT.ARROW_DOWN:	game.decideAccel(Compass.SOUTH, false); break;
+		case 97:	game.decideAccel(Compass.WEST, false); break;
+		case 100:	game.decideAccel(Compass.EAST, false); break;
+		case 119:	game.decideAccel(Compass.NORTH, false); break;
+		case 115:	game.decideAccel(Compass.SOUTH, false); break;
 		}
 	}
 	

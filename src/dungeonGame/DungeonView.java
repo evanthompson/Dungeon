@@ -72,20 +72,13 @@ public class DungeonView implements Observer {
 			public void handleEvent(Event e) {
 				drawObjects(e);
 				drawHero(e);
-				drawMenu(e);
+				drawPauseScreen(e);
 			}
 		});
 		// Paint Listener - Menu
 		menu.addListener(SWT.Paint, new Listener () {
-			public void handleEvent (Event event) {
-				Hero hero = game.getHero();
-				int firstRow = 10;
-				int rowHeight = 20;
-				event.gc.drawText(hero.getPos().x + "," + hero.getPos().y, 10, firstRow);
-				event.gc.drawText("Speed: " + hero.getSpeed(), 10, firstRow += rowHeight);
-				event.gc.drawText("keyFlags: " + game.keyFlags.values() , 10, firstRow += rowHeight);
-				event.gc.drawText("Experience: " + hero.getExperience(), 10, firstRow += rowHeight);
-				event.gc.drawText("Money: " + hero.getBooty(), 10, firstRow += rowHeight);
+			public void handleEvent (Event e) {
+				drawMenu(e);
 			}
 		});
 		
@@ -137,11 +130,34 @@ public class DungeonView implements Observer {
 		e.gc.fillOval(heroObj.getCrosshair().x - (width / 2), heroObj.getCrosshair().y  - (width / 2), width, width);
 	}
 	
-	public void drawMenu(Event e) {
+	public void drawPauseScreen(Event e) {
 		if(game.isGamePaused()) {
 			e.gc.setBackground(dGray);
-			e.gc.drawText("Game Paused", floor.getBounds().x + 200, floor.getBounds().y, false);
+			e.gc.drawText("Game Paused", 200, 10, false);
+			
+			int firstRow = 30;
+			int rowHeight = 20;
+			int i = 0;
+			for(String s : game.menuOptions) {
+				boolean isTransparent = true;
+				if(s == game.getMenuSelection()) {
+					isTransparent = false;
+				}
+				e.gc.drawText(s, 200, firstRow + (rowHeight*i), isTransparent);
+				i++;
+			}
 		}
+	}
+	
+	public void drawMenu(Event e) {
+		Hero hero = game.getHero();
+		int firstRow = 10;
+		int rowHeight = 20;
+		e.gc.drawText(hero.getPos().x + "," + hero.getPos().y, 10, firstRow);
+		e.gc.drawText("Speed: " + hero.getSpeed(), 10, firstRow += rowHeight);
+		e.gc.drawText("keyFlags: " + game.keyFlags.values() , 10, firstRow += rowHeight);
+		e.gc.drawText("Experience: " + hero.getExperience(), 10, firstRow += rowHeight);
+		e.gc.drawText("Money: " + hero.getBooty(), 10, firstRow += rowHeight);
 	}
 	
 	public void makeColors() {
