@@ -227,13 +227,11 @@ public class DungeonGame extends Observable {
 		if(loading) {
 			
 			ArrayList<Object> heroStats = saves.getTableRows("heros").get(menuSelection);
-			Hero newHero = new Hero();
-			newHero.setPosition(hero.getPos());
-			newHero.setName((String) heroStats.get(0));
-			newHero.addExp((Integer) heroStats.get(1));
-			newHero.addBooty((Integer) heroStats.get(2));
-			
-			hero = newHero;
+			hero.reset();
+			hero.setPosition(hero.getPos());
+			hero.setName((String) heroStats.get(0));
+			hero.addExp((Integer) heroStats.get(1));
+			hero.addBooty((Integer) heroStats.get(2));
 			
 		} else {
 			
@@ -285,7 +283,8 @@ public class DungeonGame extends Observable {
 	}
 	
 	public void saveGame() {
-		saves.insertRow("heros", hero.getname(), hero.getExperience(), hero.getBooty());
+		int totalExp = Math.round(hero.getRequiredExp() / 2) + hero.getExperience();
+		saves.insertRow("heros", hero.getname(), totalExp, hero.getBooty());
 		updateGame();
 	}
 	

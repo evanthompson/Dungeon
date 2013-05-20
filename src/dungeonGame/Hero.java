@@ -10,15 +10,15 @@ public class Hero extends AnimateObject {
 	
 	public Hero() {
 		super(0, 0, 100);
-		init();
+		reset();
 	}
 	
 	public Hero(int x, int y, int h) {
 		super(x, y, h);
-		init();
+		reset();
 	}
 	
-	private void init() {
+	public void reset() {
 		name = "anon";
 		setExperience(0);
 		setBooty(0);
@@ -57,7 +57,7 @@ public class Hero extends AnimateObject {
 	public void setName(String newName) { name = newName; }
 	
 	// Get Methods
-	public int getlvlExperience() { return requiredExp; }
+	public int getRequiredExp() { return requiredExp; }
 	public int getExperience() { return experience; }
 	public int getBooty() { return booty; }
 	public int getLevel() { return cLevel; }
