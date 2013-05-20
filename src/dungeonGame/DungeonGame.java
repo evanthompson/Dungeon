@@ -2,11 +2,8 @@ package dungeonGame;
 
 import java.awt.Point;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Observable;
-import java.util.SortedMap;
 import java.util.TreeMap;
 
 public class DungeonGame extends Observable {

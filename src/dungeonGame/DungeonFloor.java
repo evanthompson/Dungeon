@@ -3,7 +3,6 @@ package dungeonGame;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.util.ArrayList;
-import java.util.ListIterator;
 
 // Contains floor related information, including:
 // dimensions of map, rock and mob lists
@@ -28,7 +27,6 @@ public class DungeonFloor {
 		stairs = new ArrayList<Stair>(5);
 		
 		populate();
-		
 	}
 	
 	public void populate() {
@@ -45,7 +43,6 @@ public class DungeonFloor {
 	}
 	
 	public void placeObjects(Class<? extends GameObject> objectType, int amount) {
-		
 		Point newPoint;
 		for(int i = 0; i < amount; i++) {
 			newPoint = findFreePoint();
@@ -68,7 +65,6 @@ public class DungeonFloor {
 				System.out.println("ClassNotFoundException");
 			}
 		}
-		
 	}
 	
 	// If successful, returns a Point. Otherwise, returns null.
@@ -93,17 +89,9 @@ public class DungeonFloor {
 	public void organizeObject(GameObject obj) {
 		objects.add(obj);
 		
-		if(obj instanceof Mob) {
-			enemies.add((Mob) obj);
-		}
-		
-		if(obj instanceof Obstacle) {
-			rocks.add((Obstacle) obj);
-		}
-		
-		if(obj instanceof Stair) {
-			stairs.add((Stair) obj);
-		}
+		if(obj instanceof Mob) { enemies.add((Mob) obj); }
+		if(obj instanceof Obstacle) { rocks.add((Obstacle) obj); }
+		if(obj instanceof Stair) { stairs.add((Stair) obj); }
 	}
 		
 	public boolean overlapAt(GameObject obj, Point p) {

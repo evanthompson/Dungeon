@@ -38,7 +38,9 @@ public class SQLManager {
 			statement.setQueryTimeout(30);  // set timeout to 30 sec.
 			
 			statement.executeUpdate("DROP TABLE IF EXISTS " + tableName);
-			statement.executeUpdate("CREATE TABLE " + tableName + " (id integer, name string)");
+			statement.executeUpdate("CREATE TABLE " + tableName +
+					" (id integer, name string, lvl integer, exp integer, " + 
+					"money integer, str integer, maxlife integer, currlife integer)");
 		}
 		catch(SQLException e) {
 			// if the error message is "out of memory", 
@@ -50,13 +52,15 @@ public class SQLManager {
 		}
 	}
 	
-	public void insertRow(String table, String name) {
+	public void insertRow(String table, String name, int lvl, int exp, int money, int str, int currlife, int maxlife) {
 		try {
 			connection = DriverManager.getConnection("jdbc:sqlite:" + PATH + "saves.db");
 			Statement statement = connection.createStatement();
 			statement.setQueryTimeout(30);  // set timeout to 30 sec.
 			
-			statement.executeUpdate("INSERT INTO " + table + " values(" + nextInt++ + ", '" + name + "')");
+			statement.executeUpdate("INSERT INTO " + table + " values(" + nextInt++ +
+					", '" + name + "', " + lvl + ", " + exp + ", " + money + ", " +
+					 str + ", " + currlife + ", " + maxlife + ")");
 		}
 		catch(SQLException e) {
 			System.err.println(e.getMessage());
@@ -109,7 +113,10 @@ public class SQLManager {
 			statement.setQueryTimeout(30);  // set timeout to 30 sec.
 			ResultSet rs = statement.executeQuery("SELECT * FROM " + table);
 			while(rs.next()) {
-				System.out.println("id: " + rs.getInt("id") + " name: " + rs.getString("name"));
+				System.out.println("id:" + rs.getInt("id") + ", name:" + rs.getString("name") +
+						", lvl:" + rs.getInt("lvl") + ", exp:" + rs.getString("exp") +
+						", money:" + rs.getInt("money") + ", str:" + rs.getString("str") +
+						", life:" + rs.getInt("currlife") + "/" + rs.getString("maxlife") + ".");
 			}
 		}
 		catch(SQLException e) {
@@ -131,14 +138,13 @@ public class SQLManager {
 	}
 	
 	public static void main(String[] args) {
-		String table = "myTable";
+		String table = "heros";
 		SQLManager myManager = new SQLManager(table);
 		
 		System.out.println("## starting run ##");
 		
-		myManager.insertRow(table, "evan");
-		myManager.insertRow(table, "mike");
-		myManager.insertRow(table, "troy");
+		myManager.insertRow(table, "Test1",10,0,1000,10,400,500);
+		myManager.insertRow(table, "Test2",10,0,1000,10,400,500);
 		myManager.printTable(table);
 		
 		myManager.updateTable(table, 2, "LAMP");
