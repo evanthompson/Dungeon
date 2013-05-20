@@ -5,6 +5,7 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 
 public class SQLManager {
 	
@@ -105,6 +106,31 @@ public class SQLManager {
 		}
 	}
 	
+	public ArrayList< ArrayList<Object> > getTableRows(String table) {
+		ArrayList< ArrayList<Object> > heroList = new ArrayList< ArrayList<Object> >();
+		
+		try {
+			connection = DriverManager.getConnection("jdbc:sqlite:" + PATH + "saves.db");
+			Statement statement = connection.createStatement();
+			statement.setQueryTimeout(30);  // set timeout to 30 sec.
+			ResultSet rs = statement.executeQuery("SELECT * FROM " + table);
+			while(rs.next()) {
+				ArrayList<Object> statList = new ArrayList<Object>();
+				statList.add(rs.getString("name"));
+				statList.add(rs.getInt("lvl"));
+				statList.add(rs.getInt("money"));
+				heroList.add(statList);
+			}
+		}
+		catch(SQLException e) {
+			System.err.println(e.getMessage());
+		}
+		finally {
+			closeConnection();
+		}
+		return heroList;
+	}
+	
 	public void printTable(String table) {
 		System.out.println("Results from table: " + table + "...");
 		try {
@@ -127,7 +153,7 @@ public class SQLManager {
 		}
 	}
 	
-	public void closeConnection() {
+	private void closeConnection() {
 		try {
 			if(connection != null)
 				connection.close();
@@ -137,23 +163,4 @@ public class SQLManager {
 		}
 	}
 	
-	public static void main(String[] args) {
-		String table = "heros";
-		SQLManager myManager = new SQLManager(table);
-		
-		System.out.println("## starting run ##");
-		
-		myManager.insertRow(table, "Test1",10,0,1000,10,400,500);
-		myManager.insertRow(table, "Test2",10,0,1000,10,400,500);
-		myManager.printTable(table);
-		
-		myManager.updateTable(table, 2, "LAMP");
-		myManager.printTable(table);
-		
-		myManager.deleteRow(table, 2);
-		myManager.printTable(table);
-		
-		System.out.println("## ending run ##");
-	}
-
 }

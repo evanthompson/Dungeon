@@ -1,5 +1,7 @@
 package dungeonGame;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
@@ -138,9 +140,35 @@ public class DungeonView implements Observer {
 			int firstRow = 30;
 			int rowHeight = 20;
 			int i = 0;
+			
+			if(game.isGameLoading()) {
+				ArrayList< ArrayList<Object> > heroList = game.getSaves().getTableRows("heros");
+				if(heroList == null || heroList.isEmpty()) {
+					System.out.println("heroList is null or empty");
+					return;
+				}
+				System.out.println("heroList.size() = " + heroList.size());
+				for(ArrayList<Object> list : heroList) {
+					String hero = list.get(0) + " - " + list.get(1) + ", " + list.get(2) + "g.";
+					System.out.println("name(" + list.get(0) + ")" + hero);
+					if((String)list.get(0) == "") {
+						System.out.println("name is blank");
+						hero = "ANON" + hero;
+					}
+					boolean isTransparent = true;
+					if(game.getMenuSelection() == i) {
+						isTransparent = false;
+					}
+					e.gc.drawText(hero, 200, firstRow + (rowHeight*i), isTransparent);
+					i++;
+				}
+					
+				return;
+			}
+			
 			for(String s : game.menuOptions) {
 				boolean isTransparent = true;
-				if(s == game.getMenuSelection()) {
+				if(game.menuOptions.indexOf(s) == game.getMenuSelection()) {
 					isTransparent = false;
 				}
 				e.gc.drawText(s, 200, firstRow + (rowHeight*i), isTransparent);

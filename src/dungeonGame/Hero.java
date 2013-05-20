@@ -20,7 +20,7 @@ public class Hero extends AnimateObject {
 	private void init() {
 		setExperience(0);
 		setBooty(0);
-		setCLevel(1);
+		setLevel(1);
 		setLvlExperience(100);
 	}
 	
@@ -51,12 +51,12 @@ public class Hero extends AnimateObject {
 	private void setLvlExperience(int exp) { lvlExperience = exp; }
 	private void setExperience(int exp) { experience = exp; }
 	private void setBooty(int booty) { this.booty = booty; }
-	private void setCLevel(int lvl) { cLevel = lvl;	}
+	private void setLevel(int lvl) { cLevel = lvl;	}
 	
 	// Get Methods
 	public int getlvlExperience() { return lvlExperience; }
 	public int getExperience() { return experience; }
 	public int getBooty() { return booty; }
-	public int getCLevel() { return cLevel; }
+	public int getLevel() { return cLevel; }
 	
 }

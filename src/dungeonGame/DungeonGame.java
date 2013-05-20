@@ -29,28 +29,35 @@ public class DungeonGame extends Observable {
 	
 	private Hero hero;
 	private DungeonFloor level;
+	private SQLManager saves;
+	
 	private ArrayList<DungeonFloor> dungeon;
 	private int currLevel;
-	private String menuSelection;
-	private boolean gameOver, paused;
+	private int menuSelection;
+	private boolean gameOver, paused, loading;
 	
 	public DungeonGame() {
-		paused = false;
+		loading = paused = false;
 		currLevel = 0;
 		dungeon = new ArrayList<DungeonFloor>();
 		dungeon.add(new DungeonFloor(currLevel));
 		level = dungeon.get(currLevel);
 		
+		// KeyFlag initialization and setup
 		keyFlags = new TreeMap<Compass, Boolean>();
 		for(Compass c : Compass.values()) {
 			keyFlags.put(c, false);
 		}
 		
+		// Game menu setup
 		menuOptions = new ArrayList<String>();
 		menuOptions.add("Load Game");
 		menuOptions.add("Save Game");
 		menuOptions.add("Quit Game");
-		menuSelection = menuOptions.get(0);	// First element
+		menuSelection = 0;	// First element
+		
+		// SQL database setup
+		saves = new SQLManager("heros");
 		
 		// Hero Generation
 		Point heroStart = level.findFreePoint();
@@ -61,12 +68,8 @@ public class DungeonGame extends Observable {
 	}
 	
 	public void runGame() {
-		if(gameOver) {
-			exitGame();
-		}
-		if(paused) {
-			return;
-		}
+		if(gameOver) { exitGame(); }
+		if(paused) { return; }
 		
 		// Hero Movement
 		if(hero.getAccel() == true) {
@@ -75,12 +78,11 @@ public class DungeonGame extends Observable {
 			hero.decreaseSpeed(5);
 		}
 		
-		if(keyFlags.get(Compass.NORTH)){ move2(hero, 0, -1); }
-        if(keyFlags.get(Compass.SOUTH)){ move2(hero, 0, 1); }
-        if(keyFlags.get(Compass.WEST)){ move2(hero, -1, 0); }
-        if(keyFlags.get(Compass.EAST)){ move2(hero, 1, 0); }
+		if(keyFlags.get(Compass.NORTH)){ move(hero, 0, -1); }
+        if(keyFlags.get(Compass.SOUTH)){ move(hero, 0, 1); }
+        if(keyFlags.get(Compass.WEST)){ move(hero, -1, 0); }
+        if(keyFlags.get(Compass.EAST)){ move(hero, 1, 0); }
 		
-		//setVelocity(hero);
 		hero.setCrosshair(hero.getDirection());
 		
 		// Enemy Movement
@@ -99,15 +101,29 @@ public class DungeonGame extends Observable {
 	
 	public void traverseMenu(boolean nextItem) {
 		for(int i = 0; i < menuOptions.size(); i++) {
-			if(menuOptions.get(i) == menuSelection) {
+			if(i == menuSelection) {
 				if(nextItem && (i + 1 < menuOptions.size())) {
-					menuSelection = menuOptions.get(i + 1);
+					menuSelection++;
 				} else if((!nextItem) && (i - 1 >= 0)) {
-					menuSelection = menuOptions.get(i - 1);
+					menuSelection--;
 				}
 				break;
 			}
 		}
+		updateGame();
+	}
+	
+	public void saveGame() {
+		saves.insertRow("heros", "", hero.getLevel(), hero.getExperience(), 
+				hero.getBooty(), hero.getStrength(), hero.getCurrHealth(), 
+				hero.getMaxHealth());
+		updateGame();
+	}
+	
+	public void loadGame() {
+		loading = true;
+		menuSelection = 0;
+		saves.printTable("heros");
 		updateGame();
 	}
 	
@@ -134,18 +150,18 @@ public class DungeonGame extends Observable {
 	
 	public void setVelocity(AnimateObject mover) {
 		switch(mover.getDirection()) {
-		case WEST:	move2(mover, -1, 0);
+		case WEST:	move(mover, -1, 0);
 					break;
-		case EAST:	move2(mover, 1, 0);
+		case EAST:	move(mover, 1, 0);
 					break;
-		case NORTH:	move2(mover, 0, -1);
+		case NORTH:	move(mover, 0, -1);
 					break;
-		case SOUTH:	move2(mover, 0, 1);
+		case SOUTH:	move(mover, 0, 1);
 					break;
 		}
 	}
 	
-	public void move2(AnimateObject mover, int xFactor, int yFactor) {
+	public void move(AnimateObject mover, int xFactor, int yFactor) {
 		int xSpeed = xFactor * mover.getSpeed();
 		int ySpeed = yFactor * mover.getSpeed();
 		if(xSpeed == 0 && ySpeed == 0) {
@@ -234,16 +250,32 @@ public class DungeonGame extends Observable {
 	
 	public void togglePause() {
 		paused = !paused;
+		menuSelection = 0;
+		loading = false;
 		updateGame();
 	}
+	
+	public void menuDecision() {
+		if(menuSelection == 0) {
+			loadGame();
+		} else if(menuSelection == 1) {
+			saveGame();
+			System.out.println("Game saved.");
+		} else if(menuSelection == 2) {
+			quitGame();
+		} else {
+			System.out.println("menuSelection = " + menuSelection + "?!?");
+		}
+	}
 	public void quitGame() {
-		if(menuSelection == menuOptions.get(menuOptions.size() - 1))
-			gameOver = true;
+		gameOver = true;
 	}
 	
 	// Get Methods
 	public Hero getHero() { return hero; }
 	public DungeonFloor getFloor() { return level; }
 	public Boolean isGamePaused() { return paused; }
-	public String getMenuSelection() { return menuSelection; }
+	public Boolean isGameLoading() { return loading; }
+	public int getMenuSelection() { return menuSelection; }
+	public SQLManager getSaves() { return saves; }
 }
