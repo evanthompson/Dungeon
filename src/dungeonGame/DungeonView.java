@@ -135,45 +135,44 @@ public class DungeonView implements Observer {
 	public void drawPauseScreen(Event e) {
 		if(game.isGamePaused()) {
 			e.gc.setBackground(dGray);
+			e.gc.setForeground(shell.getDisplay().getSystemColor(SWT.COLOR_WHITE));
 			e.gc.drawText("Game Paused", 200, 10, false);
 			
 			int firstRow = 30;
 			int rowHeight = 20;
-			int i = 0;
 			
 			if(game.isGameLoading()) {
-				ArrayList< ArrayList<Object> > heroList = game.getSaves().getTableRows("heros");
-				if(heroList == null || heroList.isEmpty()) {
-					System.out.println("heroList is null or empty");
-					return;
-				}
-				System.out.println("heroList.size() = " + heroList.size());
-				for(ArrayList<Object> list : heroList) {
-					String hero = list.get(0) + " - " + list.get(1) + ", " + list.get(2) + "g.";
-					System.out.println("name(" + list.get(0) + ")" + hero);
-					if((String)list.get(0) == "") {
-						System.out.println("name is blank");
-						hero = "ANON" + hero;
-					}
+				drawLoadingMenu(e);
+			} else {
+				for(int i = 0; i < game.menuOptions.size(); i++) {
 					boolean isTransparent = true;
-					if(game.getMenuSelection() == i) {
+					if(i == game.getMenuSelection()) {
 						isTransparent = false;
 					}
-					e.gc.drawText(hero, 200, firstRow + (rowHeight*i), isTransparent);
-					i++;
+					e.gc.drawText(game.menuOptions.get(i), 200, firstRow + (rowHeight*i), isTransparent);
 				}
-					
-				return;
 			}
+		}
+	}
+	
+	public void drawLoadingMenu(Event e) {
+		ArrayList< ArrayList<Object> > heroList = game.getSaves().getTableRows("heros");
+		if(heroList == null || heroList.isEmpty()) {
+			System.out.println("heroList is null or empty");
+			return;
+		}
+		int firstRow = 30;
+		int rowHeight = 20;
+		for(int i = 0; i < heroList.size(); i++) {
+			ArrayList<Object> list = heroList.get(i);
+			boolean isTransparent = true;
+			String hero = list.get(0) + ": " + list.get(1) + ", " + list.get(2) + "g.";
+			if(list.get(0).equals("")) { hero = "ANON" + hero; }
 			
-			for(String s : game.menuOptions) {
-				boolean isTransparent = true;
-				if(game.menuOptions.indexOf(s) == game.getMenuSelection()) {
-					isTransparent = false;
-				}
-				e.gc.drawText(s, 200, firstRow + (rowHeight*i), isTransparent);
-				i++;
+			if(game.getMenuSelection() == i) {
+				isTransparent = false;
 			}
+			e.gc.drawText(hero, 200, firstRow + (rowHeight*i), isTransparent);
 		}
 	}
 	

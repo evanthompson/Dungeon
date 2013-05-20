@@ -99,34 +99,6 @@ public class DungeonGame extends Observable {
 		updateGame();
 	}
 	
-	public void traverseMenu(boolean nextItem) {
-		for(int i = 0; i < menuOptions.size(); i++) {
-			if(i == menuSelection) {
-				if(nextItem && (i + 1 < menuOptions.size())) {
-					menuSelection++;
-				} else if((!nextItem) && (i - 1 >= 0)) {
-					menuSelection--;
-				}
-				break;
-			}
-		}
-		updateGame();
-	}
-	
-	public void saveGame() {
-		saves.insertRow("heros", "", hero.getLevel(), hero.getExperience(), 
-				hero.getBooty(), hero.getStrength(), hero.getCurrHealth(), 
-				hero.getMaxHealth());
-		updateGame();
-	}
-	
-	public void loadGame() {
-		loading = true;
-		menuSelection = 0;
-		saves.printTable("heros");
-		updateGame();
-	}
-	
 	public void updateGame() {
 		setChanged();
 		notifyObservers();
@@ -248,6 +220,38 @@ public class DungeonGame extends Observable {
 		updateGame();
 	}
 	
+	//////////////////////////////////////////
+	// Menu related Methods
+	
+	public void menuDecision() {
+		if(loading) {
+			
+			ArrayList<Object> heroStats = saves.getTableRows("heros").get(menuSelection);
+			Hero newHero = new Hero();
+			newHero.setPosition(hero.getPos());
+			newHero.setName((String) heroStats.get(0));
+			newHero.addExp((Integer) heroStats.get(1));
+			newHero.addBooty((Integer) heroStats.get(2));
+			
+			hero = newHero;
+			
+		} else {
+			
+			if(menuSelection == 0) {
+				loadGame();
+			} else if(menuSelection == 1) {
+				saveGame();
+				System.out.println("Game saved.");
+			} else if(menuSelection == 2) {
+				quitGame();
+			} else {
+				System.out.println("menuSelection = " + menuSelection + "?!?");
+			}
+			
+		}
+		updateGame();
+	}
+	
 	public void togglePause() {
 		paused = !paused;
 		menuSelection = 0;
@@ -255,18 +259,36 @@ public class DungeonGame extends Observable {
 		updateGame();
 	}
 	
-	public void menuDecision() {
-		if(menuSelection == 0) {
-			loadGame();
-		} else if(menuSelection == 1) {
-			saveGame();
-			System.out.println("Game saved.");
-		} else if(menuSelection == 2) {
-			quitGame();
-		} else {
-			System.out.println("menuSelection = " + menuSelection + "?!?");
+	public void traverseMenu(boolean nextItem) {
+		int listLength = menuOptions.size();
+		if(loading) {
+			listLength = getSaves().getTableRows("heros").size();
 		}
+		for(int i = 0; i < listLength; i++) {
+			if(i == menuSelection) {
+				if(nextItem && (i + 1 < listLength)) {
+					menuSelection++;
+				} else if((!nextItem) && (i - 1 >= 0)) {
+					menuSelection--;
+				}
+				break;
+			}
+		}
+		updateGame();
 	}
+	
+	public void loadGame() {
+		loading = true;
+		menuSelection = 0;
+		saves.printTable("heros");
+		updateGame();
+	}
+	
+	public void saveGame() {
+		saves.insertRow("heros", "", hero.getExperience(), hero.getBooty());
+		updateGame();
+	}
+	
 	public void quitGame() {
 		gameOver = true;
 	}

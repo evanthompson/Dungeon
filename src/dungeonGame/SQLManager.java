@@ -40,8 +40,8 @@ public class SQLManager {
 			
 			statement.executeUpdate("DROP TABLE IF EXISTS " + tableName);
 			statement.executeUpdate("CREATE TABLE " + tableName +
-					" (id integer, name string, lvl integer, exp integer, " + 
-					"money integer, str integer, maxlife integer, currlife integer)");
+					" (id integer, name string, exp integer, money integer)");
+					
 		}
 		catch(SQLException e) {
 			// if the error message is "out of memory", 
@@ -53,15 +53,14 @@ public class SQLManager {
 		}
 	}
 	
-	public void insertRow(String table, String name, int lvl, int exp, int money, int str, int currlife, int maxlife) {
+	public void insertRow(String table, String name, int exp, int money) {
 		try {
 			connection = DriverManager.getConnection("jdbc:sqlite:" + PATH + "saves.db");
 			Statement statement = connection.createStatement();
 			statement.setQueryTimeout(30);  // set timeout to 30 sec.
 			
 			statement.executeUpdate("INSERT INTO " + table + " values(" + nextInt++ +
-					", '" + name + "', " + lvl + ", " + exp + ", " + money + ", " +
-					 str + ", " + currlife + ", " + maxlife + ")");
+					", '" + name + "', " + exp + ", " + money + ")");
 		}
 		catch(SQLException e) {
 			System.err.println(e.getMessage());
@@ -117,7 +116,7 @@ public class SQLManager {
 			while(rs.next()) {
 				ArrayList<Object> statList = new ArrayList<Object>();
 				statList.add(rs.getString("name"));
-				statList.add(rs.getInt("lvl"));
+				statList.add(rs.getInt("exp"));
 				statList.add(rs.getInt("money"));
 				heroList.add(statList);
 			}
@@ -140,9 +139,7 @@ public class SQLManager {
 			ResultSet rs = statement.executeQuery("SELECT * FROM " + table);
 			while(rs.next()) {
 				System.out.println("id:" + rs.getInt("id") + ", name:" + rs.getString("name") +
-						", lvl:" + rs.getInt("lvl") + ", exp:" + rs.getString("exp") +
-						", money:" + rs.getInt("money") + ", str:" + rs.getString("str") +
-						", life:" + rs.getInt("currlife") + "/" + rs.getString("maxlife") + ".");
+						", exp:" + rs.getString("exp") + ", money:" + rs.getInt("money") + ".");
 			}
 		}
 		catch(SQLException e) {
