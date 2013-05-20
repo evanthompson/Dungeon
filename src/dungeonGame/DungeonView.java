@@ -1,7 +1,5 @@
 package dungeonGame;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
@@ -80,7 +78,7 @@ public class DungeonView implements Observer {
 		// Paint Listener - Menu
 		menu.addListener(SWT.Paint, new Listener () {
 			public void handleEvent (Event e) {
-				drawMenu(e);
+				drawSideMenu(e);
 			}
 		});
 		
@@ -176,7 +174,7 @@ public class DungeonView implements Observer {
 		}
 	}
 	
-	public void drawMenu(Event e) {
+	public void drawSideMenu(Event e) {
 		Hero hero = game.getHero();
 		int firstRow = 10;
 		int rowHeight = 20;

@@ -51,9 +51,9 @@ public class Hero extends AnimateObject {
 
 	// Set Methods
 	private void setRequiredExp(int exp) { requiredExp = exp; }
-	public void setExperience(int exp) { experience = exp; }
-	public void setBooty(int booty) { this.booty = booty; }
-	public void setLevel(int lvl) { cLevel = lvl; }
+	private void setExperience(int exp) { experience = exp; }
+	private void setBooty(int booty) { this.booty = booty; }
+	private void setLevel(int lvl) { cLevel = lvl; }
 	public void setName(String newName) { name = newName; }
 	
 	// Get Methods

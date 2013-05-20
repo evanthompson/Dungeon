@@ -57,7 +57,7 @@ public class DungeonGame extends Observable {
 		menuSelection = 0;	// First element
 		
 		// SQL database setup
-		saves = new SQLManager("heros");
+		saves = new SQLManager();
 		
 		// Hero Generation
 		Point heroStart = level.findFreePoint();
@@ -285,7 +285,7 @@ public class DungeonGame extends Observable {
 	}
 	
 	public void saveGame() {
-		saves.insertRow("heros", "", hero.getExperience(), hero.getBooty());
+		saves.insertRow("heros", hero.getname(), hero.getExperience(), hero.getBooty());
 		updateGame();
 	}
 	

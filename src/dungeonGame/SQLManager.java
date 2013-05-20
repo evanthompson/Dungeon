@@ -13,9 +13,8 @@ public class SQLManager {
 	private static int nextInt;
 	
 	private Connection connection;
-	private String tableName;
 	
-	public SQLManager(String name) {
+	public SQLManager() {
 		// load the sqlite-JDBC driver using the current class loader
 		try {
 			Class.forName("org.sqlite.JDBC");
@@ -23,11 +22,10 @@ public class SQLManager {
 			System.out.println("ClassNotFoundException");
 		}
 		
-		tableName = name;
 		nextInt = 1;
 		connection = null;
 		
-		createTable(tableName);
+		createTable("Heros");
 	}
 	
 	public void createTable(String name) {
@@ -38,8 +36,8 @@ public class SQLManager {
 			Statement statement = connection.createStatement();
 			statement.setQueryTimeout(30);  // set timeout to 30 sec.
 			
-			statement.executeUpdate("DROP TABLE IF EXISTS " + tableName);
-			statement.executeUpdate("CREATE TABLE " + tableName +
+			statement.executeUpdate("DROP TABLE IF EXISTS " + name);
+			statement.executeUpdate("CREATE TABLE " + name +
 					" (id integer, name string, exp integer, money integer)");
 					
 		}
@@ -70,14 +68,14 @@ public class SQLManager {
 		}
 	}
 	
-	public void updateTable(String table, int rowId, String newName) {
+	public void updateTable(String table, int rowId, String newName, int newExp, int newMoney) {
 		try {
 			connection = DriverManager.getConnection("jdbc:sqlite:" + PATH + "saves.db");
 			Statement statement = connection.createStatement();
 			statement.setQueryTimeout(30);  // set timeout to 30 sec.
-			String update = "UPDATE " + table + " " +
-							"SET name='" + newName + "' " +
-							"WHERE id=" + rowId + ";";
+			String update = "UPDATE " + table + 
+							" SET name='" + newName + "', exp=" + newExp + ", money=" + newMoney +
+							" WHERE id=" + rowId + ";";
 			statement.executeUpdate(update);
 		}
 		catch(SQLException e) {
