@@ -7,6 +7,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
 import dungeonGame.DungeonGame.Compass;
+import dungeonGame.DungeonGame.GameState;
 
 public class DungeonController implements KeyListener {
 	
@@ -47,7 +48,7 @@ public class DungeonController implements KeyListener {
 	
 	@Override
 	public void keyPressed(KeyEvent e) {
-		if(game.isGamePaused()) {
+		if(game.getGameState() != GameState.PLAY) {
 			switch(e.keyCode) {
 			case SWT.SPACE:			game.togglePause(); break;
 			case SWT.ARROW_UP:		game.traverseMenu(false); break;
@@ -82,7 +83,7 @@ public class DungeonController implements KeyListener {
 	
 	@Override
 	public void keyReleased(KeyEvent e) {
-		if(game.isGamePaused()) {
+		if(game.getGameState() != GameState.PLAY) {
 			return;
 		}
 		

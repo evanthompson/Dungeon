@@ -22,22 +22,24 @@ public class DungeonGame extends Observable {
 				Random mob movement
 				Contact with exit loads next floor
 				Each Floor must be remembered
-	 */
+	*/
+	
 	public enum Compass { NORTH, WEST, EAST, SOUTH }
+	public enum GameState { PLAY, MAIN, LOAD, SAVE, EXIT }
+	
 	public Map<Compass, Boolean> keyFlags;
 	public ArrayList<String> menuOptions;
 	
-	private Hero hero;
+	private ArrayList<DungeonFloor> dungeon;
 	private DungeonFloor level;
 	private SQLManager saves;
+	private Hero hero;
 	
-	private ArrayList<DungeonFloor> dungeon;
+	private GameState gameState;
 	private int currLevel;
 	private int menuSelection;
-	private boolean gameOver, paused, loading;
 	
 	public DungeonGame() {
-		loading = paused = false;
 		currLevel = 0;
 		dungeon = new ArrayList<DungeonFloor>();
 		dungeon.add(new DungeonFloor(currLevel));
@@ -54,7 +56,7 @@ public class DungeonGame extends Observable {
 		menuOptions.add("Load Game");
 		menuOptions.add("Save Game");
 		menuOptions.add("Quit Game");
-		menuSelection = 0;	// First element
+		changeState(GameState.PLAY);
 		
 		// SQL database setup
 		saves = new SQLManager();
@@ -68,8 +70,8 @@ public class DungeonGame extends Observable {
 	}
 	
 	public void runGame() {
-		if(gameOver) { exitGame(); }
-		if(paused) { return; }
+		if(gameState == GameState.EXIT) { exitGame(); }
+		if(gameState != GameState.PLAY) { return; }
 		
 		// Hero Movement
 		if(hero.getAccel() == true) {
@@ -203,13 +205,11 @@ public class DungeonGame extends Observable {
 		ArrayList<GameObject> targets = new ArrayList<GameObject>();
 		for(Mob m : level.getEnemies()) {
 			if(level.overlapAt(m, hero.getCrosshair())) {
-				//targets.add(m);
 				m.damage(hero.getStrength() * 10);
 				if(m.getCurrHealth() <= 0) {
 					System.out.println("hero got " + m.getBooty() + " gil and " + m.getExperience() + " experience.");
 					hero.addBooty(m.getBooty());
 					hero.addExp(m.getExperience());
-					//level.removeObject(m);
 					targets.add(m);
 				}
 			}
@@ -224,7 +224,7 @@ public class DungeonGame extends Observable {
 	// Menu related Methods
 	
 	public void menuDecision() {
-		if(loading) {
+		if(gameState == GameState.LOAD) {
 			
 			ArrayList<Object> heroStats = saves.getTableRows("heros").get(menuSelection);
 			hero.reset();
@@ -242,8 +242,6 @@ public class DungeonGame extends Observable {
 				System.out.println("Game saved.");
 			} else if(menuSelection == 2) {
 				quitGame();
-			} else {
-				System.out.println("menuSelection = " + menuSelection + "?!?");
 			}
 			
 		}
@@ -251,15 +249,17 @@ public class DungeonGame extends Observable {
 	}
 	
 	public void togglePause() {
-		paused = !paused;
-		menuSelection = 0;
-		loading = false;
+		if(gameState != GameState.PLAY) {
+			changeState(GameState.PLAY);
+		} else {
+			changeState(GameState.MAIN);
+		}
 		updateGame();
 	}
 	
 	public void traverseMenu(boolean nextItem) {
 		int listLength = menuOptions.size();
-		if(loading) {
+		if(gameState == GameState.LOAD) {
 			listLength = getSaves().getTableRows("heros").size();
 		}
 		for(int i = 0; i < listLength; i++) {
@@ -275,28 +275,34 @@ public class DungeonGame extends Observable {
 		updateGame();
 	}
 	
-	public void loadGame() {
-		loading = true;
+	public void changeState(GameState newState) {
+		gameState = newState;
 		menuSelection = 0;
+	}
+	
+	public void loadGame() {
+		changeState(GameState.LOAD);
 		saves.printTable("heros");
 		updateGame();
 	}
 	
 	public void saveGame() {
-		int totalExp = Math.round(hero.getRequiredExp() / 2) + hero.getExperience();
+		int totalExp = hero.getExperience() + ((int) Math.pow(2, hero.getLevel() - 2) * 100);
+		if(hero.getLevel() == 1) {
+			totalExp = hero.getExperience();
+		}
 		saves.insertRow("heros", hero.getname(), totalExp, hero.getBooty());
 		updateGame();
 	}
 	
 	public void quitGame() {
-		gameOver = true;
+		gameState = GameState.EXIT;
 	}
 	
 	// Get Methods
 	public Hero getHero() { return hero; }
 	public DungeonFloor getFloor() { return level; }
-	public Boolean isGamePaused() { return paused; }
-	public Boolean isGameLoading() { return loading; }
+	public GameState getGameState() { return gameState; }
 	public int getMenuSelection() { return menuSelection; }
 	public SQLManager getSaves() { return saves; }
 }

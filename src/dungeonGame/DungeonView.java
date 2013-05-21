@@ -20,6 +20,8 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 
+import dungeonGame.DungeonGame.GameState;
+
 public class DungeonView implements Observer {
 	private ArrayList<Resource> cleanUp;
 	private Color dGray, gray, lGray;
@@ -131,7 +133,7 @@ public class DungeonView implements Observer {
 	}
 	
 	public void drawPauseScreen(Event e) {
-		if(game.isGamePaused()) {
+		if(game.getGameState() != GameState.PLAY) {
 			e.gc.setBackground(dGray);
 			e.gc.setForeground(shell.getDisplay().getSystemColor(SWT.COLOR_WHITE));
 			e.gc.drawText("Game Paused", 200, 10, false);
@@ -139,7 +141,7 @@ public class DungeonView implements Observer {
 			int firstRow = 30;
 			int rowHeight = 20;
 			
-			if(game.isGameLoading()) {
+			if(game.getGameState() == GameState.LOAD) {
 				drawLoadingMenu(e);
 			} else {
 				for(int i = 0; i < game.menuOptions.size(); i++) {

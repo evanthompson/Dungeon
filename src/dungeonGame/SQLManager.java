@@ -31,21 +31,27 @@ public class SQLManager {
 	
 	public void createTable(String tableName) {
 		try {
-			// create a database connection
 			connection = DriverManager.getConnection("jdbc:sqlite:" + PATH + "saves.db");
 			DatabaseMetaData meta = connection.getMetaData();
 			ResultSet rs = meta.getTables(null, null, tableName, null);
+			Statement statement = connection.createStatement();
+			statement.setQueryTimeout(30); // in seconds
 			
 			if(!rs.next()) {
-				// table tableName does not exist
-				Statement statement = connection.createStatement();
-				statement.setQueryTimeout(30);  // set timeout to 30 sec.
-				
-				//statement.executeUpdate("DROP TABLE IF EXISTS " + tableName);
+				// table 'tableName' does not exist
 				statement.executeUpdate("CREATE TABLE " + tableName +
 						" (id integer, name string, exp integer, money integer)");
 			} else {
 				System.out.println("table " + tableName + " exists");
+				// Find highest ID value and set nextInt to it
+				
+				rs = statement.executeQuery("SELECT id FROM " + tableName + ";");
+				while(rs.next()) {
+					if(rs.getInt("id") >= nextInt) {
+						System.out.println("saveId: " + rs.getInt("id") + " >= " + nextInt);
+						nextInt = rs.getInt("id") + 1;
+					}
+				}
 			}
 		}
 		catch(SQLException e) {
@@ -61,7 +67,7 @@ public class SQLManager {
 		try {
 			connection = DriverManager.getConnection("jdbc:sqlite:" + PATH + "saves.db");
 			Statement statement = connection.createStatement();
-			statement.setQueryTimeout(30);  // set timeout to 30 sec.
+			statement.setQueryTimeout(30);
 			
 			statement.executeUpdate("INSERT INTO " + table + " values(" + nextInt++ +
 					", '" + name + "', " + exp + ", " + money + ")");
@@ -78,7 +84,8 @@ public class SQLManager {
 		try {
 			connection = DriverManager.getConnection("jdbc:sqlite:" + PATH + "saves.db");
 			Statement statement = connection.createStatement();
-			statement.setQueryTimeout(30);  // set timeout to 30 sec.
+			statement.setQueryTimeout(30);
+			
 			String update = "UPDATE " + table + 
 							" SET name='" + newName + "', exp=" + newExp + ", money=" + newMoney +
 							" WHERE id=" + rowId + ";";
@@ -96,7 +103,8 @@ public class SQLManager {
 		try {
 			connection = DriverManager.getConnection("jdbc:sqlite:" + PATH + "saves.db");
 			Statement statement = connection.createStatement();
-			statement.setQueryTimeout(30);  // set timeout to 30 sec.
+			statement.setQueryTimeout(30);
+			
 			String update = "DELETE FROM " + table + " " +
 							"WHERE id=" + rowId + ";";
 			statement.executeUpdate(update);
@@ -115,7 +123,8 @@ public class SQLManager {
 		try {
 			connection = DriverManager.getConnection("jdbc:sqlite:" + PATH + "saves.db");
 			Statement statement = connection.createStatement();
-			statement.setQueryTimeout(30);  // set timeout to 30 sec.
+			statement.setQueryTimeout(30);
+			
 			ResultSet rs = statement.executeQuery("SELECT * FROM " + table);
 			while(rs.next()) {
 				ArrayList<Object> statList = new ArrayList<Object>();
@@ -139,7 +148,8 @@ public class SQLManager {
 		try {
 			connection = DriverManager.getConnection("jdbc:sqlite:" + PATH + "saves.db");
 			Statement statement = connection.createStatement();
-			statement.setQueryTimeout(30);  // set timeout to 30 sec.
+			statement.setQueryTimeout(30);
+			
 			ResultSet rs = statement.executeQuery("SELECT * FROM " + table);
 			while(rs.next()) {
 				System.out.println("id:" + rs.getInt("id") + ", name:" + rs.getString("name") +
