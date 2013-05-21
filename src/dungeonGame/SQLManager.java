@@ -48,7 +48,6 @@ public class SQLManager {
 				rs = statement.executeQuery("SELECT id FROM " + tableName + ";");
 				while(rs.next()) {
 					if(rs.getInt("id") >= nextInt) {
-						System.out.println("saveId: " + rs.getInt("id") + " >= " + nextInt);
 						nextInt = rs.getInt("id") + 1;
 					}
 				}

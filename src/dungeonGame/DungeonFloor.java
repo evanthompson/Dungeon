@@ -127,7 +127,7 @@ public class DungeonFloor {
 	}
 	
 	public void removeObjects(ArrayList<GameObject> list) {
-		System.out.print(list + " is being removed from..");
+		System.out.print(list.get(0).getClass().getSimpleName() + " is being removed from..");
 		if(enemies.removeAll(list)) { System.out.print(" Enemies"); }
 		if(rocks.removeAll(list)) { System.out.print(" Rocks"); }
 		if(objects.removeAll(list)) { System.out.print(" GameObjects"); }
