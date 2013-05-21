@@ -1,6 +1,7 @@
 package dungeonGame;
 
 import java.sql.Connection;
+import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -28,22 +29,27 @@ public class SQLManager {
 		createTable("Heros");
 	}
 	
-	public void createTable(String name) {
+	public void createTable(String tableName) {
 		try {
 			// create a database connection
 			connection = DriverManager.getConnection("jdbc:sqlite:" + PATH + "saves.db");
+			DatabaseMetaData meta = connection.getMetaData();
+			ResultSet rs = meta.getTables(null, null, tableName, null);
 			
-			Statement statement = connection.createStatement();
-			statement.setQueryTimeout(30);  // set timeout to 30 sec.
-			
-			statement.executeUpdate("DROP TABLE IF EXISTS " + name);
-			statement.executeUpdate("CREATE TABLE " + name +
-					" (id integer, name string, exp integer, money integer)");
-					
+			if(!rs.next()) {
+				// table tableName does not exist
+				Statement statement = connection.createStatement();
+				statement.setQueryTimeout(30);  // set timeout to 30 sec.
+				
+				//statement.executeUpdate("DROP TABLE IF EXISTS " + tableName);
+				statement.executeUpdate("CREATE TABLE " + tableName +
+						" (id integer, name string, exp integer, money integer)");
+			} else {
+				System.out.println("table " + tableName + " exists");
+			}
 		}
 		catch(SQLException e) {
-			// if the error message is "out of memory", 
-			// it probably means no database file is found
+			// "out of memory" error --> database file not found
 			System.err.println(e.getMessage());
 		}
 		finally {
