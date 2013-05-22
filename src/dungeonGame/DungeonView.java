@@ -144,7 +144,7 @@ public class DungeonView implements Observer {
 			if(game.getGameState() == GameState.LOAD) {
 				drawLoadingMenu(e);
 			} else if(game.getGameState() == GameState.SAVE) {
-				drawSaveMenu(e);
+				drawLoadingMenu(e);
 			} else {
 				for(int i = 0; i < game.menuOptions.size(); i++) {
 					boolean isTransparent = true;
@@ -158,27 +158,6 @@ public class DungeonView implements Observer {
 	}
 	
 	public void drawLoadingMenu(Event e) {
-		ArrayList< ArrayList<Object> > heroList = game.getSaves().getTableRows("heros");
-		if(heroList == null || heroList.isEmpty()) {
-			System.out.println("heroList is null or empty");
-			return;
-		}
-		int firstRow = 30;
-		int rowHeight = 20;
-		for(int i = 0; i < heroList.size(); i++) {
-			ArrayList<Object> list = heroList.get(i);
-			boolean isTransparent = true;
-			String hero = list.get(0) + ": " + list.get(1) + ", " + list.get(2) + "g.";
-			if(list.get(0).equals("")) { hero = "ANON" + hero; }
-			
-			if(game.getMenuSelection() == i) {
-				isTransparent = false;
-			}
-			e.gc.drawText(hero, 200, firstRow + (rowHeight*i), isTransparent);
-		}
-	}
-	
-	public void drawSaveMenu(Event e) {
 		ArrayList< ArrayList<Object> > heroList = game.getSaves().getTableRows("heros");
 		if(heroList == null || heroList.isEmpty()) {
 			System.out.println("heroList is null or empty");

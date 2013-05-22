@@ -27,17 +27,16 @@ public class DungeonGame extends Observable {
 	public enum Compass { NORTH, WEST, EAST, SOUTH }
 	public enum GameState { PLAY, MAIN, LOAD, SAVE, EXIT }
 	
-	public Map<Compass, Boolean> keyFlags;
-	public ArrayList<String> menuOptions;
+	public Map<Compass, Boolean>	keyFlags;
+	public ArrayList<String>		menuOptions;
 	
-	private ArrayList<DungeonFloor> dungeon;
-	private DungeonFloor level;
-	private SQLManager saves;
-	private Hero hero;
+	private ArrayList<DungeonFloor>	dungeon;
+	private DungeonFloor			level;
+	private SQLManager				saves;
+	private Hero					hero;
 	
-	private GameState gameState;
-	private int currLevel;
-	private int menuSelection;
+	private GameState				gameState;
+	private int						currLevel, menuSelection;
 	
 	public DungeonGame() {
 		currLevel = 0;
@@ -80,10 +79,10 @@ public class DungeonGame extends Observable {
 			hero.decreaseSpeed(5);
 		}
 		
-		if(keyFlags.get(Compass.NORTH)){ move(hero, 0, -1); }
-        if(keyFlags.get(Compass.SOUTH)){ move(hero, 0, 1); }
-        if(keyFlags.get(Compass.WEST)){ move(hero, -1, 0); }
-        if(keyFlags.get(Compass.EAST)){ move(hero, 1, 0); }
+		if(keyFlags.get(Compass.NORTH)) { move(hero, 0, -1); }
+        if(keyFlags.get(Compass.SOUTH)) { move(hero, 0, 1); }
+        if(keyFlags.get(Compass.WEST)) { move(hero, -1, 0); }
+        if(keyFlags.get(Compass.EAST)) { move(hero, 1, 0); }
 		
 		hero.setCrosshair(hero.getDirection());
 		
@@ -107,7 +106,7 @@ public class DungeonGame extends Observable {
 	}
 	
 	public void exitGame() {
-		System.out.println("exiting game");
+		System.out.println("Exiting game");
 		System.exit(0);
 	}
 	
@@ -124,14 +123,10 @@ public class DungeonGame extends Observable {
 	
 	public void setVelocity(AnimateObject mover) {
 		switch(mover.getDirection()) {
-		case WEST:	move(mover, -1, 0);
-					break;
-		case EAST:	move(mover, 1, 0);
-					break;
-		case NORTH:	move(mover, 0, -1);
-					break;
-		case SOUTH:	move(mover, 0, 1);
-					break;
+		case WEST:	move(mover, -1, 0);	break;
+		case EAST:	move(mover, 1, 0);	break;
+		case NORTH:	move(mover, 0, -1);	break;
+		case SOUTH:	move(mover, 0, 1);	break;
 		}
 	}
 	
@@ -225,25 +220,16 @@ public class DungeonGame extends Observable {
 	
 	public void menuDecision() {
 		if(gameState == GameState.LOAD) {
-			
-			ArrayList<Object> heroStats = saves.getTableRows("heros").get(menuSelection);
-			hero.reset();
-			hero.setPosition(hero.getPos());
-			hero.setName((String) heroStats.get(0));
-			hero.addExp((Integer) heroStats.get(1));
-			hero.addBooty((Integer) heroStats.get(2));
-			
+			loadGame();
 		} else if(gameState == GameState.SAVE) {
 			saveGame();
 		}
 		else {
 			
 			if(menuSelection == 0) {
-				loadGame();
+				changeState(GameState.LOAD);
 			} else if(menuSelection == 1) {
 				changeState(GameState.SAVE);
-				
-				//System.out.println("Game saved.");
 			} else if(menuSelection == 2) {
 				quitGame();
 			}
@@ -263,7 +249,7 @@ public class DungeonGame extends Observable {
 	
 	public void traverseMenu(boolean nextItem) {
 		int listLength = menuOptions.size();
-		if(gameState == GameState.LOAD) {
+		if(gameState == GameState.LOAD || gameState == GameState.SAVE) {
 			listLength = getSaves().getTableRows("heros").size();
 		}
 		for(int i = 0; i < listLength; i++) {
@@ -284,19 +270,23 @@ public class DungeonGame extends Observable {
 		menuSelection = 0;
 	}
 	
-	public void loadGame() {
-		changeState(GameState.LOAD);
-		saves.printTable("heros");
+	public void loadGame() {		
+		ArrayList<Object> heroStats = saves.getTableRows("heros").get(menuSelection);
+		hero.reset();
+		hero.setPosition(hero.getPos());
+		hero.setName((String) heroStats.get(0));
+		hero.addExp((Integer) heroStats.get(1));
+		hero.addBooty((Integer) heroStats.get(2));
+		
 		updateGame();
 	}
 	
 	public void saveGame() {
 		int totalExp = hero.getExperience() + ((int) Math.pow(2, hero.getLevel() - 2) * 100);
-		if(hero.getLevel() == 1) {
-			totalExp = hero.getExperience();
-		}
-		//saves.insertRow("heros", hero.getname(), totalExp, hero.getBooty());
+		if(hero.getLevel() == 1) { totalExp = hero.getExperience(); }
 		saves.updateTable("heros", menuSelection + 1, hero.getname(), totalExp, hero.getBooty());
+		changeState(GameState.MAIN);
+		
 		updateGame();
 	}
 	
