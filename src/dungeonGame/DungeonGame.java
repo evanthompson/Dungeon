@@ -233,13 +233,17 @@ public class DungeonGame extends Observable {
 			hero.addExp((Integer) heroStats.get(1));
 			hero.addBooty((Integer) heroStats.get(2));
 			
-		} else {
+		} else if(gameState == GameState.SAVE) {
+			saveGame();
+		}
+		else {
 			
 			if(menuSelection == 0) {
 				loadGame();
 			} else if(menuSelection == 1) {
-				saveGame();
-				System.out.println("Game saved.");
+				changeState(GameState.SAVE);
+				
+				//System.out.println("Game saved.");
 			} else if(menuSelection == 2) {
 				quitGame();
 			}
@@ -291,7 +295,8 @@ public class DungeonGame extends Observable {
 		if(hero.getLevel() == 1) {
 			totalExp = hero.getExperience();
 		}
-		saves.insertRow("heros", hero.getname(), totalExp, hero.getBooty());
+		//saves.insertRow("heros", hero.getname(), totalExp, hero.getBooty());
+		saves.updateTable("heros", menuSelection + 1, hero.getname(), totalExp, hero.getBooty());
 		updateGame();
 	}
 	

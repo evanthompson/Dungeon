@@ -38,9 +38,12 @@ public class SQLManager {
 			statement.setQueryTimeout(30); // in seconds
 			
 			if(!rs.next()) {
-				// table 'tableName' does not exist
+				// table does not exist
 				statement.executeUpdate("CREATE TABLE " + tableName +
 						" (id integer, name string, exp integer, money integer)");
+				insertRow(tableName, "save 1", 0, 0);
+				insertRow(tableName, "save 2", 0, 0);
+				insertRow(tableName, "save 3", 0, 0);
 			} else {
 				System.out.println("table " + tableName + " exists");
 				// Find highest ID value and set nextInt to it
