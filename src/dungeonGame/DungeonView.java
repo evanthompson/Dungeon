@@ -168,8 +168,7 @@ public class DungeonView implements Observer {
 		for(int i = 0; i < heroList.size(); i++) {
 			ArrayList<Object> list = heroList.get(i);
 			boolean isTransparent = true;
-			String hero = list.get(0) + ": " + list.get(1) + ", " + list.get(2) + "g.";
-			if(list.get(0).equals("")) { hero = "ANON" + hero; }
+			String hero = "Name:" + list.get(0) + " Exp:" + list.get(1) + " $" + list.get(2);
 			
 			if(game.getMenuSelection() == i) {
 				isTransparent = false;

@@ -278,6 +278,7 @@ public class DungeonGame extends Observable {
 		hero.addExp((Integer) heroStats.get(1));
 		hero.addBooty((Integer) heroStats.get(2));
 		
+		changeState(GameState.MAIN);
 		updateGame();
 	}
 	
@@ -285,8 +286,8 @@ public class DungeonGame extends Observable {
 		int totalExp = hero.getExperience() + ((int) Math.pow(2, hero.getLevel() - 2) * 100);
 		if(hero.getLevel() == 1) { totalExp = hero.getExperience(); }
 		saves.updateTable("heros", menuSelection + 1, hero.getname(), totalExp, hero.getBooty());
-		changeState(GameState.MAIN);
 		
+		changeState(GameState.MAIN);
 		updateGame();
 	}
 	
