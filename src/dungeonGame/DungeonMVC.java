@@ -17,11 +17,7 @@ public class DungeonMVC {
 		controller.addModel(view.getGame());
 		controller.addView(view);
 		
-		view.addController(controller);
-		// Before starting the game looping, have a basic start menu
-		// view.loadStartMenu(); --> would show black screen with basic new/load game..
-		// could have a START state, and do a check within the game's loop..
-		
+		view.addController(controller);		
 		controller.startGame();
 		
 		shell.pack();
