@@ -151,7 +151,12 @@ public class DungeonView implements Observer {
 					if(i == game.getMenuSelection()) {
 						isTransparent = false;
 					}
-					e.gc.drawText(game.menuOptions.get(i), 200, firstRow + (rowHeight*i), isTransparent);
+					
+					if(game.getGameState() == GameState.START && i == 1) {
+						e.gc.drawText("New Game", 200, firstRow + (rowHeight*i), isTransparent);
+					} else {
+						e.gc.drawText(game.menuOptions.get(i), 200, firstRow + (rowHeight*i), isTransparent);
+					}
 				}
 			}
 		}

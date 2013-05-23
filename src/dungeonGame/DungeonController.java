@@ -31,7 +31,6 @@ public class DungeonController implements KeyListener {
 	}
 
 	public void startGame() {
-		
 		timer = new Runnable() {
 			public void run() {
 				if(shell.isDisposed()) {
@@ -50,7 +49,8 @@ public class DungeonController implements KeyListener {
 	public void keyPressed(KeyEvent e) {
 		if(game.getGameState() != GameState.PLAY) {
 			switch(e.keyCode) {
-			case SWT.SPACE:			game.togglePause(); break;
+			case SWT.SPACE:			if(game.getGameState() != GameState.START)
+									{ game.togglePause(); } break;
 			case SWT.ARROW_UP:		game.traverseMenu(false); break;
 			case SWT.ARROW_DOWN:	game.traverseMenu(true); break;
 			case SWT.CR:			game.menuDecision();

@@ -25,7 +25,7 @@ public class DungeonGame extends Observable {
 	*/
 	
 	public enum Compass { NORTH, WEST, EAST, SOUTH }
-	public enum GameState { PLAY, MAIN, LOAD, SAVE, EXIT }
+	public enum GameState { START, PLAY, MAIN, LOAD, SAVE, EXIT }
 	
 	public Map<Compass, Boolean>	keyFlags;
 	public ArrayList<String>		menuOptions;
@@ -55,7 +55,7 @@ public class DungeonGame extends Observable {
 		menuOptions.add("Load Game");
 		menuOptions.add("Save Game");
 		menuOptions.add("Quit Game");
-		changeState(GameState.PLAY);
+		changeState(GameState.START);
 		
 		// SQL database setup
 		saves = new SQLManager();
@@ -223,15 +223,18 @@ public class DungeonGame extends Observable {
 			loadGame();
 		} else if(gameState == GameState.SAVE) {
 			saveGame();
-		}
-		else {
+		} else {
 			
 			if(menuSelection == 0) {
 				changeState(GameState.LOAD);
 			} else if(menuSelection == 1) {
-				changeState(GameState.SAVE);
+				if(gameState == GameState.START) {
+					changeState(GameState.PLAY);
+				} else {
+					changeState(GameState.SAVE);
+				}
 			} else if(menuSelection == 2) {
-				quitGame();
+				gameState = GameState.EXIT;
 			}
 			
 		}
@@ -289,10 +292,6 @@ public class DungeonGame extends Observable {
 		
 		changeState(GameState.MAIN);
 		updateGame();
-	}
-	
-	public void quitGame() {
-		gameState = GameState.EXIT;
 	}
 	
 	// Get Methods

@@ -13,6 +13,10 @@ Since then, I have added:
 
 
 TODO List:
+1. Starting menu
+2. Movement animation and direction
+3. Menu visual completion
+
 -Movement
 	--Level traversal
 		---Connect stairs vertically in pairs (same x/y)
