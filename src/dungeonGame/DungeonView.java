@@ -8,17 +8,22 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.RGB;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.graphics.Resource;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Text;
 
 import dungeonGame.DungeonGame.GameState;
 
@@ -26,6 +31,7 @@ public class DungeonView implements Observer {
 	private ArrayList<Resource> cleanUp;
 	private Color dGray, gray, lGray;
 	private Image rock, goo, hero, stairsUp, stairsDown;
+	private Font titleFont;
 	private DungeonGame game;
 	
 	private Shell shell;
@@ -42,7 +48,6 @@ public class DungeonView implements Observer {
 		createImages();
 		
 		GridLayout layout;
-		GridData data;
 		layout = new GridLayout();
 		layout.numColumns = 2;
 		shell.setBackground(dGray);
@@ -52,7 +57,7 @@ public class DungeonView implements Observer {
 		floor = new Canvas(shell, SWT.NONE);
 		floor.setBackground(gray);
 		
-		data = new GridData();
+		GridData data = new GridData();
 		data.horizontalAlignment = SWT.BEGINNING;
 		data.heightHint = 500;
 		data.widthHint = 500;
@@ -92,7 +97,6 @@ public class DungeonView implements Observer {
 				}
 			}
 		});
-		
 	}
 	
 	public void drawObjects(Event e) {
@@ -138,26 +142,11 @@ public class DungeonView implements Observer {
 			e.gc.setForeground(shell.getDisplay().getSystemColor(SWT.COLOR_WHITE));
 			e.gc.drawText("Game Paused", 200, 10, false);
 			
-			int firstRow = 30;
-			int rowHeight = 20;
-			
-			if(game.getGameState() == GameState.LOAD) {
-				drawLoadingMenu(e);
-			} else if(game.getGameState() == GameState.SAVE) {
-				drawLoadingMenu(e);
-			} else {
-				for(int i = 0; i < game.menuOptions.size(); i++) {
-					boolean isTransparent = true;
-					if(i == game.getMenuSelection()) {
-						isTransparent = false;
-					}
-					
-					if(game.getGameState() == GameState.START && i == 1) {
-						e.gc.drawText("New Game", 200, firstRow + (rowHeight*i), isTransparent);
-					} else {
-						e.gc.drawText(game.menuOptions.get(i), 200, firstRow + (rowHeight*i), isTransparent);
-					}
-				}
+			switch(game.getGameState()) {
+			case LOAD:	drawLoadingMenu(e);	break;
+			case SAVE:	drawLoadingMenu(e);	break;
+			case START:	drawStartMenu(e);	break;
+			default:	drawMainMenu(e);
 			}
 		}
 	}
@@ -168,7 +157,7 @@ public class DungeonView implements Observer {
 			System.out.println("heroList is null or empty");
 			return;
 		}
-		int firstRow = 30;
+		int firstRow = 70;
 		int rowHeight = 20;
 		for(int i = 0; i < heroList.size(); i++) {
 			ArrayList<Object> list = heroList.get(i);
@@ -179,6 +168,35 @@ public class DungeonView implements Observer {
 				isTransparent = false;
 			}
 			e.gc.drawText(hero, 200, firstRow + (rowHeight*i), isTransparent);
+		}
+	}
+	
+	public void drawStartMenu(Event e) {
+		e.gc.fillRectangle(0, 0, game.getFloor().MAP_WIDTH, game.getFloor().MAP_HEIGHT);
+		e.gc.setFont(titleFont);
+		e.gc.drawText("The Dungeon Crawler", (game.getFloor().MAP_WIDTH / 2) - 50, 300);
+		e.gc.setFont(shell.getDisplay().getSystemFont());
+		drawMainMenu(e);
+		
+	}
+	
+	public void drawMainMenu(Event e) {
+		int firstRow = 30;
+		int rowHeight = 20;
+		for(int i = 0; i < game.menuOptions.size(); i++) {
+			boolean isTransparent = true;
+			if(i == game.getMenuSelection()) {
+				isTransparent = false;
+				e.gc.setForeground(shell.getDisplay().getSystemColor(SWT.COLOR_YELLOW));
+			} else {
+				e.gc.setForeground(shell.getDisplay().getSystemColor(SWT.COLOR_WHITE));
+			}
+			
+			if(game.getGameState() == GameState.START && i == 1) {
+				e.gc.drawText("New Game", 200, firstRow + (rowHeight*i), isTransparent);
+			} else {
+				e.gc.drawText(game.menuOptions.get(i), 200, firstRow + (rowHeight*i), isTransparent);
+			}
 		}
 	}
 	
@@ -197,6 +215,7 @@ public class DungeonView implements Observer {
 		addResource(dGray = new Color(shell.getDisplay(), 30, 30, 30));
 		addResource(gray = new Color(shell.getDisplay(), 150, 150, 150));
 		addResource(lGray = new Color(shell.getDisplay(), 200, 200, 200));
+		addResource(titleFont = new Font(shell.getDisplay(), "Helvetica", 24, SWT.BOLD));
 	}
 	
 	public void createImages() {

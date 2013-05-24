@@ -37,7 +37,6 @@ public class DungeonController implements KeyListener {
 					System.out.println("Runnable: shell is disposed!");
 					return;
 				}
-				
 				game.runGame();
 				shell.getDisplay().timerExec(DELAY, timer);
 			}
