@@ -9,21 +9,20 @@ import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.RGB;
-import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.graphics.Resource;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.layout.RowData;
+import org.eclipse.swt.layout.RowLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Text;
 
 import dungeonGame.DungeonGame.GameState;
 
@@ -37,6 +36,7 @@ public class DungeonView implements Observer {
 	private Shell shell;
 	private Canvas floor;
 	private Composite menu;
+	private Canvas startScreen;
 	
 	public DungeonView(Shell s) {
 		game = new DungeonGame();
@@ -47,32 +47,83 @@ public class DungeonView implements Observer {
 		makeColors();
 		createImages();
 		
-		GridLayout layout;
-		layout = new GridLayout();
-		layout.numColumns = 2;
+		RowLayout rowLayout = new RowLayout();
+		shell.setLayout(rowLayout);
+		
+		// Start Screen Initialization
+		startScreen = new Canvas(shell, SWT.NONE);
+		RowLayout startLayout = new RowLayout();
+		startLayout.wrap = true;
+		startLayout.pack = false;
+		startLayout.justify = true;
+		startLayout.type = SWT.VERTICAL;
+		startLayout.marginLeft = 5;
+		startLayout.marginTop = 5;
+		startLayout.marginRight = 5;
+		startLayout.marginBottom = 5;
+		startLayout.spacing = 0;
+		startScreen.setLayout(startLayout);
+		startScreen.setBackground(dGray);
+		
+		RowData rd = new RowData();
+		rd.height = 500;
+		rd.width = 700;
+		startScreen.setLayoutData(rd);
+		
+		// Paint Listener - StartScreen
+		startScreen.addListener(SWT.Paint, new Listener () {
+			public void handleEvent (Event e) {
+				drawPauseScreen(e);
+				drawMainMenu(e);
+			}
+		});
+		
+		// Dispose Listener
+		shell.addDisposeListener(new DisposeListener () {
+			public void widgetDisposed(DisposeEvent e) {
+				for(Resource c : cleanUp) {
+					c.dispose();
+				}
+			}
+		});
+	}
+	
+	public void initActiveGame() {
+		if(startScreen != null) {
+			//startScreen.setVisible(false);
+			//startScreen.setData(null);
+			//startScreen.setLayout(null);
+			startScreen.dispose();
+			startScreen = null;
+		}
+		
+		GridLayout gridLayout;
+		gridLayout = new GridLayout();
+		gridLayout.numColumns = 2;
 		shell.setBackground(dGray);
-		shell.setLayout(layout);
+		shell.setLayout(gridLayout);
 		
 		// Floor Initialization
 		floor = new Canvas(shell, SWT.NONE);
 		floor.setBackground(gray);
 		
-		GridData data = new GridData();
-		data.horizontalAlignment = SWT.BEGINNING;
-		data.heightHint = 500;
-		data.widthHint = 500;
-		floor.setLayoutData(data);
+		GridData floorData = new GridData();
+		floorData.horizontalAlignment = SWT.BEGINNING;
+		floorData.heightHint = 500;
+		floorData.widthHint = 500;
+		floor.setLayoutData(floorData);
 		
 		// Menu Initialization
 		menu = new Composite(shell, SWT.NONE);
 		menu.setBackground(lGray);
-		data = new GridData();
-		data.horizontalAlignment = SWT.END;
-		data.grabExcessVerticalSpace = true;
-		data.grabExcessHorizontalSpace = true;
-		data.minimumHeight = 400;
-		data.widthHint = 200;
-		menu.setLayoutData(data);
+
+		GridData menuData = new GridData();
+		menuData.horizontalAlignment = SWT.END;
+		menuData.grabExcessVerticalSpace = true;
+		menuData.grabExcessHorizontalSpace = true;
+		menuData.minimumHeight = 400;
+		menuData.widthHint = 200;
+		menu.setLayoutData(menuData);
 		
 		// Paint Listener - Floor
 		floor.addListener(SWT.Paint, new Listener () {
@@ -89,14 +140,7 @@ public class DungeonView implements Observer {
 			}
 		});
 		
-		// Dispose Listener
-		shell.addDisposeListener(new DisposeListener () {
-			public void widgetDisposed(DisposeEvent e) {
-				for(Resource c : cleanUp) {
-					c.dispose();
-				}
-			}
-		});
+		shell.pack();
 	}
 	
 	public void drawObjects(Event e) {
@@ -145,7 +189,7 @@ public class DungeonView implements Observer {
 			switch(game.getGameState()) {
 			case LOAD:	drawLoadingMenu(e);	break;
 			case SAVE:	drawLoadingMenu(e);	break;
-			case START:	drawStartMenu(e);	break;
+			case START:	drawStartMenu(e);	break; // might be redundant
 			default:	drawMainMenu(e);
 			}
 		}
@@ -176,8 +220,6 @@ public class DungeonView implements Observer {
 		e.gc.setFont(titleFont);
 		e.gc.drawText("The Dungeon Crawler", (game.getFloor().MAP_WIDTH / 2) - 50, 300);
 		e.gc.setFont(shell.getDisplay().getSystemFont());
-		drawMainMenu(e);
-		
 	}
 	
 	public void drawMainMenu(Event e) {
@@ -260,8 +302,17 @@ public class DungeonView implements Observer {
 			System.out.println("Update: shell is disposed!");
 			return;
 		}
-		floor.redraw();
-		menu.redraw();
+		
+		if(startScreen != null && game.getGameState() == GameState.START) {
+			startScreen.redraw();
+		} else {
+			if(floor == null || menu == null) {
+				System.out.println("floor/menu is Null! Initiate active game.");
+				initActiveGame();
+			}
+			floor.redraw();
+			menu.redraw();
+		}
 	}
 	
 	public void addController(DungeonController controller) {
