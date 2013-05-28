@@ -11,6 +11,11 @@ Since then, I have added:
 -	Database Storage (SQLite) to keep track of information between
 	sessions (stats, saves, characters).
 
+Requirements:
+To properly run, the project must include library references to swt.jar and
+sqlite-jdbc.jar (using ver. 3.7.2).
+	- swt.jar can be found on the eclipse website
+	- sqlite-jdbc.jar can be found at https://bitbucket.org/xerial/sqlite-jdbc/downloads
 
 TODO List:
 1. Starting menu
