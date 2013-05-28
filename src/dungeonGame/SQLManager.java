@@ -17,6 +17,8 @@ public class SQLManager {
 	
 	public SQLManager() {
 		// load the sqlite-JDBC driver using the current class loader
+		// sqlite-jdbc-3.7.2.jar can be found here:
+		// https://bitbucket.org/xerial/sqlite-jdbc/downloads
 		try {
 			Class.forName("org.sqlite.JDBC");
 		} catch (ClassNotFoundException e1) {
