@@ -1,5 +1,6 @@
 package dungeonGame;
 
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
@@ -8,7 +9,7 @@ public class DungeonMVC {
 	public DungeonMVC() {
 		//DungeonGame game = new DungeonGame();
 		Display display = new Display();
-		Shell shell = new Shell(display);
+		Shell shell = new Shell(display, SWT.CLOSE | SWT.TITLE | SWT.MIN);
 		shell.setText("Dungeon");
 		DungeonView view = new DungeonView(shell);
 		//game.addObserver(view); // inside DungeonView Constructor

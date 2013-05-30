@@ -11,13 +11,13 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Resource;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.layout.RowData;
 import org.eclipse.swt.layout.RowLayout;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
@@ -90,9 +90,6 @@ public class DungeonView implements Observer {
 	
 	public void initActiveGame() {
 		if(startScreen != null) {
-			//startScreen.setVisible(false);
-			//startScreen.setData(null);
-			//startScreen.setLayout(null);
 			startScreen.dispose();
 			startScreen = null;
 		}
@@ -223,8 +220,15 @@ public class DungeonView implements Observer {
 	}
 	
 	public void drawMainMenu(Event e) {
+		int startingX = 200;
 		int firstRow = 30;
-		int rowHeight = 20;
+		int rowSpace = 20;
+		Point origin = new Point(startingX, firstRow);
+		e.gc.setBackground(dGray);
+		e.gc.fillRoundRectangle(origin.x - 20, origin.y, 100, firstRow*3, 10, 10);
+		e.gc.setForeground(shell.getDisplay().getSystemColor(SWT.COLOR_WHITE));
+		e.gc.drawRoundRectangle(origin.x - 20, origin.y, 100, firstRow*3, 10, 10);
+		
 		for(int i = 0; i < game.menuOptions.size(); i++) {
 			boolean isTransparent = true;
 			if(i == game.getMenuSelection()) {
@@ -235,9 +239,9 @@ public class DungeonView implements Observer {
 			}
 			
 			if(game.getGameState() == GameState.START && i == 1) {
-				e.gc.drawText("New Game", 200, firstRow + (rowHeight*i), isTransparent);
+				e.gc.drawText("New Game", 200, firstRow += (rowSpace), isTransparent);
 			} else {
-				e.gc.drawText(game.menuOptions.get(i), 200, firstRow + (rowHeight*i), isTransparent);
+				e.gc.drawText(game.menuOptions.get(i), 200, firstRow += (rowSpace), isTransparent);
 			}
 		}
 	}
@@ -300,6 +304,9 @@ public class DungeonView implements Observer {
 	public void update(Observable obs, Object obj) {
 		if(shell.isDisposed()) {
 			System.out.println("Update: shell is disposed!");
+			return;
+		}
+		if(game.getGameState() == GameState.EXIT) {
 			return;
 		}
 		
