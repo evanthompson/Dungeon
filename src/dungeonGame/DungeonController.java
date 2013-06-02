@@ -15,7 +15,7 @@ public class DungeonController implements KeyListener {
 	@SuppressWarnings("unused")
 	private DungeonView view;
 	private Runnable timer;
-	private final int DELAY = 50;
+	private final int DELAY = 30;
 	private Shell shell;
 	
 	public DungeonController(Shell s) {

@@ -57,18 +57,19 @@ public class DungeonView implements Observer {
 		startLayout.pack = false;
 		startLayout.justify = true;
 		startLayout.type = SWT.VERTICAL;
-		startLayout.marginLeft = 5;
-		startLayout.marginTop = 5;
-		startLayout.marginRight = 5;
-		startLayout.marginBottom = 5;
+		//startLayout.marginLeft = 5;
+		//startLayout.marginTop = 5;
+		//startLayout.marginRight = 5;
+		//startLayout.marginBottom = 5;
 		startLayout.spacing = 0;
+		//startLayout.center = true;
 		startScreen.setLayout(startLayout);
 		startScreen.setBackground(dGray);
 		
-		RowData rd = new RowData();
-		rd.height = 500;
-		rd.width = 700;
-		startScreen.setLayoutData(rd);
+		RowData rdata = new RowData();
+		rdata.height = 500;
+		rdata.width = 700;
+		startScreen.setLayoutData(rdata);
 		
 		// Paint Listener - StartScreen
 		startScreen.addListener(SWT.Paint, new Listener () {
@@ -180,7 +181,7 @@ public class DungeonView implements Observer {
 	public void drawPauseScreen(Event e) {
 		if(game.getGameState() != GameState.PLAY) {
 			e.gc.setBackground(dGray);
-			e.gc.setForeground(shell.getDisplay().getSystemColor(SWT.COLOR_WHITE));
+			e.gc.setForeground(e.display.getSystemColor(SWT.COLOR_WHITE));
 			e.gc.drawText("Game Paused", 200, 10, false);
 			
 			switch(game.getGameState()) {
@@ -216,7 +217,7 @@ public class DungeonView implements Observer {
 		e.gc.fillRectangle(0, 0, game.getFloor().MAP_WIDTH, game.getFloor().MAP_HEIGHT);
 		e.gc.setFont(titleFont);
 		e.gc.drawText("The Dungeon Crawler", (game.getFloor().MAP_WIDTH / 2) - 50, 300);
-		e.gc.setFont(shell.getDisplay().getSystemFont());
+		e.gc.setFont(e.display.getSystemFont());
 	}
 	
 	public void drawMainMenu(Event e) {
@@ -225,23 +226,23 @@ public class DungeonView implements Observer {
 		int rowSpace = 20;
 		Point origin = new Point(startingX, firstRow);
 		e.gc.setBackground(dGray);
-		e.gc.fillRoundRectangle(origin.x - 20, origin.y, 100, firstRow*3, 10, 10);
-		e.gc.setForeground(shell.getDisplay().getSystemColor(SWT.COLOR_WHITE));
-		e.gc.drawRoundRectangle(origin.x - 20, origin.y, 100, firstRow*3, 10, 10);
+		e.gc.fillRoundRectangle(origin.x - 20, origin.y, 100, firstRow * game.menuOptions.size(), 10, 10);
+		e.gc.setForeground(e.display.getSystemColor(SWT.COLOR_WHITE));
+		e.gc.drawRoundRectangle(origin.x - 20, origin.y, 100, firstRow * game.menuOptions.size(), 10, 10);
 		
 		for(int i = 0; i < game.menuOptions.size(); i++) {
 			boolean isTransparent = true;
 			if(i == game.getMenuSelection()) {
 				isTransparent = false;
-				e.gc.setForeground(shell.getDisplay().getSystemColor(SWT.COLOR_YELLOW));
+				e.gc.setForeground(e.display.getSystemColor(SWT.COLOR_YELLOW));
 			} else {
-				e.gc.setForeground(shell.getDisplay().getSystemColor(SWT.COLOR_WHITE));
+				e.gc.setForeground(e.display.getSystemColor(SWT.COLOR_WHITE));
 			}
 			
 			if(game.getGameState() == GameState.START && i == 1) {
-				e.gc.drawText("New Game", 200, firstRow += (rowSpace), isTransparent);
+				e.gc.drawText("New Game", startingX, firstRow += (rowSpace), isTransparent);
 			} else {
-				e.gc.drawText(game.menuOptions.get(i), 200, firstRow += (rowSpace), isTransparent);
+				e.gc.drawText(game.menuOptions.get(i), startingX, firstRow += (rowSpace), isTransparent);
 			}
 		}
 	}

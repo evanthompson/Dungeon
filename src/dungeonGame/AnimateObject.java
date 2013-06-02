@@ -34,7 +34,7 @@ public class AnimateObject extends GameObject {
 		stride = 10;
 		reach = 20;
 		
-		maxSpeed = 15;
+		maxSpeed = 10;
 		currSpeed = 0;
 	}
 	
