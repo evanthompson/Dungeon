@@ -57,10 +57,6 @@ public class DungeonView implements Observer {
 		startLayout.pack = false;
 		startLayout.justify = true;
 		startLayout.type = SWT.VERTICAL;
-		//startLayout.marginLeft = 5;
-		//startLayout.marginTop = 5;
-		//startLayout.marginRight = 5;
-		//startLayout.marginBottom = 5;
 		startLayout.spacing = 0;
 		//startLayout.center = true;
 		startScreen.setLayout(startLayout);
@@ -82,6 +78,7 @@ public class DungeonView implements Observer {
 		// Dispose Listener
 		shell.addDisposeListener(new DisposeListener () {
 			public void widgetDisposed(DisposeEvent e) {
+				System.out.println("Disposing Resources");
 				for(Resource c : cleanUp) {
 					c.dispose();
 				}
@@ -90,9 +87,8 @@ public class DungeonView implements Observer {
 	}
 	
 	public void initActiveGame() {
-		if(startScreen != null) {
+		if(startScreen != null && !startScreen.isDisposed()) {
 			startScreen.dispose();
-			startScreen = null;
 		}
 		
 		GridLayout gridLayout;
@@ -270,35 +266,21 @@ public class DungeonView implements Observer {
 	}
 	
 	public void createImages() {
-		rock = new Image(shell.getDisplay(), getClass().getResourceAsStream("images/rock_base_2.png"));
-		ImageData rockData = rock.getImageData();
-		RGB rockRgb = rockData.palette.getRGB(rockData.getPixel(0, 0));
-		rockData.transparentPixel = rockData.palette.getPixel(rockRgb);
-		addResource(rock = new Image(shell.getDisplay(), rockData.scaledTo(50,50)));
+		addResource(rock = constructImage("images/rock_base_2.png"));
+		addResource(goo = constructImage("images/goo_1_1.png"));
+		addResource(hero = constructImage("images/hero_1.png"));
+		addResource(stairsUp = constructImage("images/stair_up.png"));
+		addResource(stairsDown = constructImage("images/stairs_down.png"));
+	}
+	
+	public Image constructImage(String filePath) {
+		Image image = new Image(shell.getDisplay(), getClass().getResourceAsStream(filePath));
+		ImageData imageData = image.getImageData();
+		RGB imageRgb = imageData.palette.getRGB(imageData.getPixel(0, 0));
+		imageData.transparentPixel = imageData.palette.getPixel(imageRgb);
 		
-		goo = new Image(shell.getDisplay(), getClass().getResourceAsStream("images/goo_1_1.png"));
-		ImageData gooData = goo.getImageData();
-		RGB gooRgb = gooData.palette.getRGB(gooData.getPixel(0, 0));
-		gooData.transparentPixel = gooData.palette.getPixel(gooRgb);
-		addResource(goo = new Image(shell.getDisplay(), gooData.scaledTo(50,50)));
-		
-		hero = new Image(shell.getDisplay(), getClass().getResourceAsStream("images/hero_1.png"));
-		ImageData heroData = hero.getImageData();
-		RGB heroRgb = rockData.palette.getRGB(heroData.getPixel(0, 0));
-		heroData.transparentPixel = rockData.palette.getPixel(heroRgb);
-		addResource(hero = new Image(shell.getDisplay(), heroData.scaledTo(50,50)));
-		
-		stairsUp = new Image(shell.getDisplay(), getClass().getResourceAsStream("images/stair_up.png"));
-		ImageData stairsUpData = stairsUp.getImageData();
-		RGB stairsUpRgb = stairsUpData.palette.getRGB(stairsUpData.getPixel(0, 0));
-		stairsUpData.transparentPixel = stairsUpData.palette.getPixel(stairsUpRgb);
-		addResource(stairsUp = new Image(shell.getDisplay(), stairsUpData.scaledTo(50,50)));
-		
-		stairsDown = new Image(shell.getDisplay(), getClass().getResourceAsStream("images/stairs_down.png"));
-		ImageData stairsDownData = stairsDown.getImageData();
-		RGB stairsDownRgb = stairsDownData.palette.getRGB(stairsDownData.getPixel(0, 0));
-		stairsDownData.transparentPixel = stairsDownData.palette.getPixel(stairsDownRgb);
-		addResource(stairsDown = new Image(shell.getDisplay(), stairsDownData.scaledTo(50,50)));
+		image.dispose();
+		return new Image(shell.getDisplay(), imageData.scaledTo(50,50));
 	}
 	
 	public void addResource(Resource r) {
@@ -312,6 +294,7 @@ public class DungeonView implements Observer {
 			return;
 		}
 		if(game.getGameState() == GameState.EXIT) {
+			shell.dispose();
 			return;
 		}
 		
@@ -332,5 +315,5 @@ public class DungeonView implements Observer {
 	}
 	
 	public DungeonGame getGame() { return game; }
-
+	public ArrayList<Resource> getResources() { return cleanUp; }
 }

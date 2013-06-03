@@ -72,7 +72,7 @@ public class DungeonController implements KeyListener {
 					}
 					System.out.println();
 					break;
-		case 99:	System.out.println(e.keyCode); break;
+		case 99:	System.out.println(e.character); break;
 		case 97:	game.decideAccel(Compass.WEST, true); break;
 		case 100:	game.decideAccel(Compass.EAST, true); break;
 		case 119:	game.decideAccel(Compass.NORTH, true); break;

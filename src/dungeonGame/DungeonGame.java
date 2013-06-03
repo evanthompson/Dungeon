@@ -69,7 +69,7 @@ public class DungeonGame extends Observable {
 	}
 	
 	public void runGame() {
-		if(gameState == GameState.EXIT) { exitGame(); }
+		if(gameState == GameState.EXIT) { return; }
 		if(gameState != GameState.PLAY) { return; }
 		
 		// Hero Movement
@@ -103,11 +103,6 @@ public class DungeonGame extends Observable {
 	public void updateGame() {
 		setChanged();
 		notifyObservers();
-	}
-	
-	public void exitGame() {
-		System.out.println("Exiting game");
-		System.exit(0);
 	}
 	
 	public void decideAccel(Compass dir, boolean accel) {
