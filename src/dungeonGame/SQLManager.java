@@ -10,7 +10,7 @@ import java.util.ArrayList;
 
 public class SQLManager {
 	
-	private final String PATH = "C:/Users/Evan/workspace/Dungeon/src/dungeonGame/";
+	private final String PATH = System.getProperty("user.dir") + "/src/dungeonGame/";
 	private static int nextInt;
 	
 	private Connection connection;
@@ -27,7 +27,6 @@ public class SQLManager {
 		
 		nextInt = 1;
 		connection = null;
-		
 		createTable("Heros");
 	}
 	

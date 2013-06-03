@@ -263,6 +263,8 @@ public class DungeonView implements Observer {
 		addResource(gray = new Color(shell.getDisplay(), 150, 150, 150));
 		addResource(lGray = new Color(shell.getDisplay(), 200, 200, 200));
 		addResource(titleFont = new Font(shell.getDisplay(), "Baumans", 24, SWT.BOLD));
+		
+		
 	}
 	
 	public void createImages() {
