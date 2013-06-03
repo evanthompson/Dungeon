@@ -16,11 +16,10 @@ import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Resource;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.layout.RowData;
-import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 
@@ -36,7 +35,7 @@ public class DungeonView implements Observer {
 	private Shell shell;
 	private Canvas floor;
 	private Composite menu;
-	private Canvas startScreen;
+	private Composite startScreen;
 	
 	public DungeonView(Shell s) {
 		game = new DungeonGame();
@@ -47,33 +46,10 @@ public class DungeonView implements Observer {
 		makeColors();
 		createImages();
 		
-		RowLayout rowLayout = new RowLayout();
-		shell.setLayout(rowLayout);
+		shell.setBackground(dGray);
+		shell.setLayout(new GridLayout());
 		
-		// Start Screen Initialization
-		startScreen = new Canvas(shell, SWT.NONE);
-		RowLayout startLayout = new RowLayout();
-		startLayout.wrap = true;
-		startLayout.pack = false;
-		startLayout.justify = true;
-		startLayout.type = SWT.VERTICAL;
-		startLayout.spacing = 0;
-		//startLayout.center = true;
-		startScreen.setLayout(startLayout);
-		startScreen.setBackground(dGray);
-		
-		RowData rdata = new RowData();
-		rdata.height = 500;
-		rdata.width = 700;
-		startScreen.setLayoutData(rdata);
-		
-		// Paint Listener - StartScreen
-		startScreen.addListener(SWT.Paint, new Listener () {
-			public void handleEvent (Event e) {
-				drawPauseScreen(e);
-				drawMainMenu(e);
-			}
-		});
+		initStartScreen();
 		
 		// Dispose Listener
 		shell.addDisposeListener(new DisposeListener () {
@@ -86,15 +62,47 @@ public class DungeonView implements Observer {
 		});
 	}
 	
+	public void initStartScreen() {
+		// Start Screen Initialization
+		GridData startData = new GridData();
+		startData.horizontalAlignment = SWT.CENTER;
+		startData.heightHint = 500;
+		startData.widthHint = 700;
+		
+		startScreen = new Composite(shell, SWT.NONE);
+		startScreen.setBackground(dGray);
+		startScreen.setLayout(new GridLayout());
+		startScreen.setLayoutData(startData);
+		
+		// Title Initialization
+		GridData titleData = new GridData();
+		titleData.horizontalAlignment = SWT.CENTER;
+		titleData.grabExcessHorizontalSpace = true;
+		titleData.verticalAlignment = SWT.CENTER;
+		titleData.grabExcessVerticalSpace = true;
+		
+		Label title = new Label(startScreen, SWT.NONE);
+		title.setFont(titleFont);
+		title.setForeground(lGray);
+		title.setBackground(dGray);
+		title.setText("Dugeon Crawler");
+		title.setLayoutData(titleData);
+		
+		// Paint Listener - StartScreen
+		startScreen.addListener(SWT.Paint, new Listener () {
+			public void handleEvent (Event e) {
+				drawMainMenu(e);
+			}
+		});
+	}
+	
 	public void initActiveGame() {
 		if(startScreen != null && !startScreen.isDisposed()) {
 			startScreen.dispose();
 		}
 		
-		GridLayout gridLayout;
-		gridLayout = new GridLayout();
+		GridLayout gridLayout = new GridLayout();
 		gridLayout.numColumns = 2;
-		shell.setBackground(dGray);
 		shell.setLayout(gridLayout);
 		
 		// Floor Initialization
@@ -183,7 +191,6 @@ public class DungeonView implements Observer {
 			switch(game.getGameState()) {
 			case LOAD:	drawLoadingMenu(e);	break;
 			case SAVE:	drawLoadingMenu(e);	break;
-			case START:	drawStartMenu(e);	break; // might be redundant
 			default:	drawMainMenu(e);
 			}
 		}
@@ -207,13 +214,6 @@ public class DungeonView implements Observer {
 			}
 			e.gc.drawText(hero, 200, firstRow + (rowHeight*i), isTransparent);
 		}
-	}
-	
-	public void drawStartMenu(Event e) {
-		e.gc.fillRectangle(0, 0, game.getFloor().MAP_WIDTH, game.getFloor().MAP_HEIGHT);
-		e.gc.setFont(titleFont);
-		e.gc.drawText("The Dungeon Crawler", (game.getFloor().MAP_WIDTH / 2) - 50, 300);
-		e.gc.setFont(e.display.getSystemFont());
 	}
 	
 	public void drawMainMenu(Event e) {
