@@ -263,7 +263,8 @@ public class DungeonView implements Observer {
 		addResource(gray = new Color(shell.getDisplay(), 150, 150, 150));
 		addResource(lGray = new Color(shell.getDisplay(), 200, 200, 200));
 		
-		if(shell.getDisplay().loadFont(System.getProperty("user.dir") + "/src/dungeonGame/Baumans-Regular.ttf")) {
+		String path = System.getProperty("user.dir") + "/src/dungeonGame/";
+		if(shell.getDisplay().loadFont(path + "Baumans-Regular.ttf")) {
 			addResource(titleFont = new Font(shell.getDisplay(), "Baumans", 24, SWT.BOLD));
         } else { System.out.println("Baumans did not load"); }
 	}
