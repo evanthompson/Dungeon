@@ -206,9 +206,9 @@ public class DungeonView implements Observer {
 		int rowSpace = 20;
 		Point origin = new Point(startingX, firstRow);
 		e.gc.setBackground(dGray);
-		e.gc.fillRoundRectangle(origin.x - 20, origin.y, 170, 30 * heroList.size(), 10, 10);
+		e.gc.fillRoundRectangle(origin.x - 20, origin.y, 170, rowSpace * heroList.size() + 30, 10, 10);
 		e.gc.setForeground(e.display.getSystemColor(SWT.COLOR_WHITE));
-		e.gc.drawRoundRectangle(origin.x - 20, origin.y, 170, 30 * heroList.size(), 10, 10);
+		e.gc.drawRoundRectangle(origin.x - 20, origin.y, 170, rowSpace * heroList.size() + 30, 10, 10);
 		
 		for(int i = 0; i < heroList.size(); i++) {
 			ArrayList<Object> list = heroList.get(i);
@@ -223,15 +223,58 @@ public class DungeonView implements Observer {
 		}
 	}
 	
+	/*
+	private void drawMenuHelper(Event e, int xStart, int yStart, int width) {
+		ArrayList<?> baseList;
+		if(game.getGameState() == GameState.MAIN) {
+			baseList = game.menuOptions;
+		} else {
+			baseList = game.getSaves().getTableRows("heros");
+		}
+		
+		if(baseList == null) {
+			System.out.println("baseList is null");
+			return;
+		}
+		int listSize = baseList.size();
+		
+		int rowSpace = 20;
+		e.gc.setBackground(dGray);
+		e.gc.fillRoundRectangle(xStart - 20, yStart, width, rowSpace * listSize + 30, 10, 10);
+		e.gc.setForeground(e.display.getSystemColor(SWT.COLOR_WHITE));
+		e.gc.drawRoundRectangle(xStart - 20, yStart, width, rowSpace * listSize + 30, 10, 10);
+		
+		for(int i = 0; i < listSize; i++) {
+			if(i == game.getMenuSelection()) {
+				e.gc.setForeground(e.display.getSystemColor(SWT.COLOR_YELLOW));
+			} else {
+				e.gc.setForeground(e.display.getSystemColor(SWT.COLOR_WHITE));
+			}
+			
+			if(game.getGameState() != GameState.MAIN) {
+				ArrayList<Object> list = (ArrayList<Object>) baseList.get(i);
+				String record = "Name:" + list.get(0) + " Exp:" + list.get(1) + " $" + list.get(2);
+				e.gc.drawText(record, xStart, yStart += (rowSpace));
+			} else {
+				if(game.getGameState() == GameState.START && i == 1) {
+					e.gc.drawText("New Game", xStart, yStart += (rowSpace));
+				} else {
+					e.gc.drawText((String) baseList.get(i), xStart, yStart += (rowSpace));
+				}
+			}
+		}
+	}
+	*/
+	
 	private void drawMainMenu(Event e) {
 		int startingX = 200;
 		int firstRow = 30;
 		int rowSpace = 20;
 		Point origin = new Point(startingX, firstRow);
 		e.gc.setBackground(dGray);
-		e.gc.fillRoundRectangle(origin.x - 20, origin.y, 100, firstRow * game.menuOptions.size(), 10, 10);
+		e.gc.fillRoundRectangle(origin.x - 20, origin.y, 100, rowSpace * game.menuOptions.size() + 30, 10, 10);
 		e.gc.setForeground(e.display.getSystemColor(SWT.COLOR_WHITE));
-		e.gc.drawRoundRectangle(origin.x - 20, origin.y, 100, firstRow * game.menuOptions.size(), 10, 10);
+		e.gc.drawRoundRectangle(origin.x - 20, origin.y, 100, rowSpace * game.menuOptions.size() + 30, 10, 10);
 		
 		for(int i = 0; i < game.menuOptions.size(); i++) {
 			if(i == game.getMenuSelection()) {
