@@ -11,7 +11,6 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
-import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Resource;
 import org.eclipse.swt.layout.GridData;
@@ -195,33 +194,6 @@ public class DungeonView implements Observer {
 		}
 	}
 	
-	private void drawLoadingMenu(Event e) {
-		ArrayList< ArrayList<Object> > heroList = game.getSaves().getTableRows("heros");
-		if(heroList == null || heroList.isEmpty()) {
-			System.out.println("heroList is null or empty");
-			return;
-		}
-		int xStart = 200;
-		int yStart = 70;
-		int rowSpace = 20;
-		e.gc.setBackground(dGray);
-		e.gc.fillRoundRectangle(xStart - 20, yStart, 170, rowSpace * heroList.size() + 30, 10, 10);
-		e.gc.setForeground(e.display.getSystemColor(SWT.COLOR_WHITE));
-		e.gc.drawRoundRectangle(xStart - 20, yStart, 170, rowSpace * heroList.size() + 30, 10, 10);
-		
-		for(int i = 0; i < heroList.size(); i++) {
-			ArrayList<Object> list = heroList.get(i);
-			String hero = "Name:" + list.get(0) + " Exp:" + list.get(1) + " $" + list.get(2);
-			
-			if(i == game.getMenuSelection()) {
-				e.gc.setForeground(e.display.getSystemColor(SWT.COLOR_YELLOW));
-			} else {
-				e.gc.setForeground(e.display.getSystemColor(SWT.COLOR_WHITE));
-			}
-			e.gc.drawText(hero, xStart, yStart += (rowSpace));
-		}
-	}
-	
 	/*
 	private void drawMenuHelper(Event e, int xStart, int yStart, int width) {
 		ArrayList<?> baseList;
@@ -286,6 +258,33 @@ public class DungeonView implements Observer {
 			} else {
 				e.gc.drawText(game.menuOptions.get(i), xStart, yStart += (rowSpace));
 			}
+		}
+	}
+	
+	private void drawLoadingMenu(Event e) {
+		ArrayList< ArrayList<Object> > heroList = game.getSaves().getTableRows("heros");
+		if(heroList == null || heroList.isEmpty()) {
+			System.out.println("heroList is null or empty");
+			return;
+		}
+		int xStart = 200;
+		int yStart = 70;
+		int rowSpace = 20;
+		e.gc.setBackground(dGray);
+		e.gc.fillRoundRectangle(xStart - 20, yStart, 170, rowSpace * heroList.size() + 30, 10, 10);
+		e.gc.setForeground(e.display.getSystemColor(SWT.COLOR_WHITE));
+		e.gc.drawRoundRectangle(xStart - 20, yStart, 170, rowSpace * heroList.size() + 30, 10, 10);
+		
+		for(int i = 0; i < heroList.size(); i++) {
+			ArrayList<Object> list = heroList.get(i);
+			String hero = "Name:" + list.get(0) + " Exp:" + list.get(1) + " $" + list.get(2);
+			
+			if(i == game.getMenuSelection()) {
+				e.gc.setForeground(e.display.getSystemColor(SWT.COLOR_YELLOW));
+			} else {
+				e.gc.setForeground(e.display.getSystemColor(SWT.COLOR_WHITE));
+			}
+			e.gc.drawText(hero, xStart, yStart += (rowSpace));
 		}
 	}
 	
