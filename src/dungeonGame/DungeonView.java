@@ -201,14 +201,13 @@ public class DungeonView implements Observer {
 			System.out.println("heroList is null or empty");
 			return;
 		}
-		int startingX = 200;
-		int firstRow = 70;
+		int xStart = 200;
+		int yStart = 70;
 		int rowSpace = 20;
-		Point origin = new Point(startingX, firstRow);
 		e.gc.setBackground(dGray);
-		e.gc.fillRoundRectangle(origin.x - 20, origin.y, 170, rowSpace * heroList.size() + 30, 10, 10);
+		e.gc.fillRoundRectangle(xStart - 20, yStart, 170, rowSpace * heroList.size() + 30, 10, 10);
 		e.gc.setForeground(e.display.getSystemColor(SWT.COLOR_WHITE));
-		e.gc.drawRoundRectangle(origin.x - 20, origin.y, 170, rowSpace * heroList.size() + 30, 10, 10);
+		e.gc.drawRoundRectangle(xStart - 20, yStart, 170, rowSpace * heroList.size() + 30, 10, 10);
 		
 		for(int i = 0; i < heroList.size(); i++) {
 			ArrayList<Object> list = heroList.get(i);
@@ -219,7 +218,7 @@ public class DungeonView implements Observer {
 			} else {
 				e.gc.setForeground(e.display.getSystemColor(SWT.COLOR_WHITE));
 			}
-			e.gc.drawText(hero, startingX, firstRow += (rowSpace));
+			e.gc.drawText(hero, xStart, yStart += (rowSpace));
 		}
 	}
 	
@@ -267,14 +266,13 @@ public class DungeonView implements Observer {
 	*/
 	
 	private void drawMainMenu(Event e) {
-		int startingX = 200;
-		int firstRow = 30;
+		int xStart = 200;
+		int yStart = 30;
 		int rowSpace = 20;
-		Point origin = new Point(startingX, firstRow);
 		e.gc.setBackground(dGray);
-		e.gc.fillRoundRectangle(origin.x - 20, origin.y, 100, rowSpace * game.menuOptions.size() + 30, 10, 10);
+		e.gc.fillRoundRectangle(xStart - 20, yStart, 100, rowSpace * game.menuOptions.size() + 30, 10, 10);
 		e.gc.setForeground(e.display.getSystemColor(SWT.COLOR_WHITE));
-		e.gc.drawRoundRectangle(origin.x - 20, origin.y, 100, rowSpace * game.menuOptions.size() + 30, 10, 10);
+		e.gc.drawRoundRectangle(xStart - 20, yStart, 100, rowSpace * game.menuOptions.size() + 30, 10, 10);
 		
 		for(int i = 0; i < game.menuOptions.size(); i++) {
 			if(i == game.getMenuSelection()) {
@@ -284,9 +282,9 @@ public class DungeonView implements Observer {
 			}
 			
 			if(game.getGameState() == GameState.START && i == 1) {
-				e.gc.drawText("New Game", startingX, firstRow += (rowSpace));
+				e.gc.drawText("New Game", xStart, yStart += (rowSpace));
 			} else {
-				e.gc.drawText(game.menuOptions.get(i), startingX, firstRow += (rowSpace));
+				e.gc.drawText(game.menuOptions.get(i), xStart, yStart += (rowSpace));
 			}
 		}
 	}
