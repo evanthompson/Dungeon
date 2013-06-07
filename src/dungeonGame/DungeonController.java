@@ -16,7 +16,7 @@ public class DungeonController implements KeyListener {
 	private Runnable timer;
 	private final int DELAY = 30;
 	private Shell shell;
-	
+		
 	public DungeonController(Shell s) {
 		shell = s;
 	}
@@ -72,7 +72,7 @@ public class DungeonController implements KeyListener {
 					}
 					System.out.println();
 					break;
-		case 99:	view.printAveTimer(); break;
+		case 99:	view.printAveTimer(); game.printTime(); break;
 		case 97:	game.decideAccel(Compass.WEST, true); break;
 		case 100:	game.decideAccel(Compass.EAST, true); break;
 		case 119:	game.decideAccel(Compass.NORTH, true); break;

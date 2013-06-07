@@ -359,7 +359,7 @@ public class DungeonView implements Observer {
 			floor.redraw();
 			if(timeCounter < 30000) {
 				long delta = System.nanoTime() - start;
-				aveTime = (aveTime * timeCounter + delta) / ++timeCounter;
+				aveTime = ((aveTime * timeCounter) + delta) / ++timeCounter;
 			} // End of performance testing code
 			
 			menu.redraw();
@@ -374,7 +374,7 @@ public class DungeonView implements Observer {
 	public ArrayList<Resource> getResources() { return cleanUp; }
 	
 	public void printAveTimer() {
-		System.out.println("aveTime = " + aveTime + "ns, with a sample size of " + timeCounter);
+		System.out.println("redraw() = " + aveTime + "ns, with a sample size of " + timeCounter);
 	}
 	
 }
