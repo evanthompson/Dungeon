@@ -12,7 +12,6 @@ import dungeonGame.DungeonGame.GameState;
 public class DungeonController implements KeyListener {
 	
 	private DungeonGame game;
-	@SuppressWarnings("unused")
 	private DungeonView view;
 	private Runnable timer;
 	private final int DELAY = 30;
@@ -37,6 +36,7 @@ public class DungeonController implements KeyListener {
 					System.out.println("Runnable: shell is disposed!");
 					return;
 				}
+				
 				game.runGame();
 				shell.getDisplay().timerExec(DELAY, timer);
 			}
@@ -72,7 +72,7 @@ public class DungeonController implements KeyListener {
 					}
 					System.out.println();
 					break;
-		case 99:	System.out.println(e.character); break;
+		case 99:	view.printAveTimer(); break;
 		case 97:	game.decideAccel(Compass.WEST, true); break;
 		case 100:	game.decideAccel(Compass.EAST, true); break;
 		case 119:	game.decideAccel(Compass.NORTH, true); break;

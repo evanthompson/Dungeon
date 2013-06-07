@@ -83,7 +83,6 @@ public class DungeonGame extends Observable {
         if(keyFlags.get(Compass.SOUTH)) { move(hero, 0, 1); }
         if(keyFlags.get(Compass.WEST)) { move(hero, -1, 0); }
         if(keyFlags.get(Compass.EAST)) { move(hero, 1, 0); }
-		
 		hero.setCrosshair(hero.getDirection());
 		
 		// Enemy Movement
@@ -126,16 +125,16 @@ public class DungeonGame extends Observable {
 	}
 	
 	public void move(AnimateObject mover, int xFactor, int yFactor) {
-		int xSpeed = xFactor * mover.getSpeed();
-		int ySpeed = yFactor * mover.getSpeed();
-		if(xSpeed == 0 && ySpeed == 0) {
+		int xDelta = xFactor * mover.getSpeed();
+		int yDelta = yFactor * mover.getSpeed();
+		if(xDelta == 0 && yDelta == 0) {
 			return;
 		}
 		
 		int xBefore = mover.getPos().x;
 		int yBefore = mover.getPos().y;
-		int xAfter = xBefore + xSpeed;
-		int yAfter = yBefore + ySpeed;
+		int xAfter = xBefore + xDelta;
+		int yAfter = yBefore + yDelta;
 		if(xFactor > 0) { xAfter += mover.SIZE; }
 		if(yFactor > 0) { yAfter += mover.SIZE; }
 		
@@ -157,17 +156,17 @@ public class DungeonGame extends Observable {
 				if(obj instanceof Stair && mover instanceof Hero) {
 					stairs = obj;
 				}
-				xSpeed = xFactor * Math.max(0, Math.min(Math.abs(xSpeed), Math.abs(xBefore - objX) - mover.SIZE));
-				ySpeed = yFactor * Math.max(0, Math.min(Math.abs(ySpeed), Math.abs(yBefore - objY) - mover.SIZE));
+				xDelta = xFactor * Math.max(0, Math.min(Math.abs(xDelta), Math.abs(xBefore - objX) - mover.SIZE));
+				yDelta = yFactor * Math.max(0, Math.min(Math.abs(yDelta), Math.abs(yBefore - objY) - mover.SIZE));
 				
-				if(xSpeed == 0 && ySpeed == 0) {
+				if(xDelta == 0 && yDelta == 0) {
 					mover.setSpeed(0);
 					break;
 				}
 			}
 		}
-		mover.setXpos(Math.min(level.getMapWidth() - mover.SIZE, Math.max(0, mover.getPos().x + xSpeed)));
-		mover.setYpos(Math.min(level.getMapHeight() - mover.SIZE, Math.max(0, mover.getPos().y + ySpeed)));
+		mover.setXpos(Math.min(level.getMapWidth() - mover.SIZE, Math.max(0, mover.getPos().x + xDelta)));
+		mover.setYpos(Math.min(level.getMapHeight() - mover.SIZE, Math.max(0, mover.getPos().y + yDelta)));
 		moveFloors((Stair) stairs);
 	}
 	

@@ -35,6 +35,9 @@ public class DungeonView implements Observer {
 	private Canvas floor;
 	private Composite menu, startScreen;
 	
+	private long aveTime = 0;
+	private int timeCounter = 0;
+	
 	public DungeonView(Shell s) {
 		game = new DungeonGame();
 		game.addObserver(this);
@@ -350,7 +353,15 @@ public class DungeonView implements Observer {
 				System.out.println("floor/menu is Null! Initiate active game.");
 				initActiveGame();
 			}
+			
+			// Performance testing code
+			long start = System.nanoTime();
 			floor.redraw();
+			if(timeCounter < 30000) {
+				long delta = System.nanoTime() - start;
+				aveTime = (aveTime * timeCounter + delta) / ++timeCounter;
+			} // End of performance testing code
+			
 			menu.redraw();
 		}
 	}
@@ -361,4 +372,9 @@ public class DungeonView implements Observer {
 	
 	public DungeonGame getGame() { return game; }
 	public ArrayList<Resource> getResources() { return cleanUp; }
+	
+	public void printAveTimer() {
+		System.out.println("aveTime = " + aveTime + "ns, with a sample size of " + timeCounter);
+	}
+	
 }
