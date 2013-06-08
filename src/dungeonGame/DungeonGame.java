@@ -82,10 +82,10 @@ public class DungeonGame extends Observable {
 			hero.decreaseSpeed(5);
 		}
 		
-		if(keyFlags.get(Compass.NORTH)) { move(hero, 0, -1); }
-        if(keyFlags.get(Compass.SOUTH)) { move(hero, 0, 1); }
-        if(keyFlags.get(Compass.WEST)) { move(hero, -1, 0); }
-        if(keyFlags.get(Compass.EAST)) { move(hero, 1, 0); }
+		if(keyFlags.get(Compass.NORTH)) { move2(hero, 0, -1); }
+        if(keyFlags.get(Compass.SOUTH)) { move2(hero, 0, 1); }
+        if(keyFlags.get(Compass.WEST)) { move2(hero, -1, 0); }
+        if(keyFlags.get(Compass.EAST)) { move2(hero, 1, 0); }
 		hero.setCrosshair(hero.getDirection());
 		
 		// Enemy Movement
@@ -120,18 +120,18 @@ public class DungeonGame extends Observable {
 	
 	public void setVelocity(AnimateObject mover) {
 		switch(mover.getDirection()) {
-		case WEST:	move(mover, -1, 0);	break;
-		case EAST:	move(mover, 1, 0);	break;
-		case NORTH:	move(mover, 0, -1);	break;
-		case SOUTH:	move(mover, 0, 1);	break;
+		case WEST:	move2(mover, -1, 0);	break;
+		case EAST:	move2(mover, 1, 0);	break;
+		case NORTH:	move2(mover, 0, -1);	break;
+		case SOUTH:	move2(mover, 0, 1);	break;
 		}
 	}
 	
 	public void move(AnimateObject mover, int xFactor, int yFactor) {
 		long start = System.nanoTime();
 		
-		int xDelta = xFactor * mover.getSpeed();
-		int yDelta = yFactor * mover.getSpeed();
+		int xDelta = xFactor * mover.getStride();
+		int yDelta = yFactor * mover.getStride();
 		if(xDelta == 0 && yDelta == 0) {
 			return;
 		}
@@ -174,6 +174,70 @@ public class DungeonGame extends Observable {
 		mover.setYpos(Math.min(level.getMapHeight() - mover.SIZE, Math.max(0, mover.getPos().y + yDelta)));
 		moveFloors((Stair) stairs);
 		
+		if(timeCounter < 30000) {
+			long delta = System.nanoTime() - start;
+			aveTime = ((aveTime * timeCounter) + delta) / ++timeCounter;
+		} // End of performance testing code
+	}
+	
+	public void move2(AnimateObject mover, int xFactor, int yFactor) {
+		long start = System.nanoTime();
+		
+		int xDelta = xFactor * mover.getStride();
+		int yDelta = yFactor * mover.getStride();
+		if(xDelta == 0 && yDelta == 0) {
+			return;
+		}
+		
+		int xBefore = mover.getPos().x;
+		int yBefore = mover.getPos().y;
+		int xAfter = xBefore + xDelta;
+		int yAfter = yBefore + yDelta;
+		if(xFactor > 0) { xAfter += mover.SIZE; }
+		if(yFactor > 0) { yAfter += mover.SIZE; }
+		
+		// Boundary Check
+		if((xBefore <= 0 && xFactor < 0) || (xBefore + mover.SIZE >= level.MAP_WIDTH - 1 && xFactor > 0)) {
+			mover.setSpeed(0);
+		}
+		if((yBefore <= 0 && yFactor < 0) || (yBefore + mover.SIZE >= level.MAP_HEIGHT - 1 && yFactor > 0)) {
+			mover.setSpeed(0);
+		}
+		
+		GameObject stairs = null;
+		for(GameObject obj : level.getObjects()) {
+			if(obj.equals(mover)) { continue; }
+			
+			int objX = obj.getPos().x;
+			int objY = obj.getPos().y;
+			
+			int objXmid = objX + (obj.SIZE / 2);
+			int objYmid = objY + (obj.SIZE / 2);
+			int moverXmid = xAfter + (obj.SIZE / 2);
+			int moverYmid = yAfter + (obj.SIZE / 2);
+			
+			int xDiff = Math.abs(moverXmid - objXmid);
+			int yDiff = Math.abs(moverYmid - objYmid);
+			int dist = (int) Math.round(Math.sqrt((xDiff * xDiff) + (yDiff * yDiff)));
+			if(dist < 50) {
+				// collision
+				if(obj instanceof Stair && mover instanceof Hero) {
+					stairs = obj;
+				}
+				xDelta = xFactor * Math.max(0, Math.min(Math.abs(xDelta), Math.abs(xBefore - objX) - mover.SIZE));
+				yDelta = yFactor * Math.max(0, Math.min(Math.abs(yDelta), Math.abs(yBefore - objY) - mover.SIZE));
+				
+				if(xDelta == 0 && yDelta == 0) {
+					mover.setSpeed(0);
+					break;
+				}
+			}
+		}
+		mover.setXpos(Math.min(level.getMapWidth() - mover.SIZE, Math.max(0, mover.getPos().x + xDelta)));
+		mover.setYpos(Math.min(level.getMapHeight() - mover.SIZE, Math.max(0, mover.getPos().y + yDelta)));
+		moveFloors((Stair) stairs);
+		
+		// Performance test code
 		if(timeCounter < 30000) {
 			long delta = System.nanoTime() - start;
 			aveTime = ((aveTime * timeCounter) + delta) / ++timeCounter;

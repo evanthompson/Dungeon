@@ -14,7 +14,7 @@ public class DungeonController implements KeyListener {
 	private DungeonGame game;
 	private DungeonView view;
 	private Runnable timer;
-	private final int DELAY = 30;
+	private final int DELAY = 32; // 30fps
 	private Shell shell;
 		
 	public DungeonController(Shell s) {
