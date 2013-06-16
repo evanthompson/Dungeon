@@ -35,6 +35,7 @@ public class DungeonView implements Observer {
 	private Canvas floor;
 	private Composite menu, startScreen;
 	
+	// Testing variables
 	private long aveTime = 0;
 	private int timeCounter = 0;
 	

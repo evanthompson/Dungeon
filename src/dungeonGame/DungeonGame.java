@@ -38,6 +38,7 @@ public class DungeonGame extends Observable {
 	private GameState				gameState;
 	private int						currLevel, menuSelection;
 	
+	// Testing variables
 	private long aveTime = 0;
 	private int timeCounter = 0;
 	
