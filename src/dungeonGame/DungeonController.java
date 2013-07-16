@@ -12,6 +12,7 @@ import dungeonGame.DungeonGame.GameState;
 public class DungeonController implements KeyListener {
 	
 	private DungeonGame game;
+	@SuppressWarnings("unused")
 	private DungeonView view;
 	private Runnable timer;
 	private final int DELAY = 32; // 30fps
@@ -72,7 +73,7 @@ public class DungeonController implements KeyListener {
 					}
 					System.out.println();
 					break;
-		case 99:	view.printAveTimer(); game.printTime(); break;
+	//	case 99:	break;
 		case 97:	game.decideAccel(Compass.WEST, true); break;
 		case 100:	game.decideAccel(Compass.EAST, true); break;
 		case 119:	game.decideAccel(Compass.NORTH, true); break;

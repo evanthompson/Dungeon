@@ -38,10 +38,6 @@ public class DungeonGame extends Observable {
 	private GameState				gameState;
 	private int						currLevel, menuSelection;
 	
-	// Testing variables
-	private long aveTime = 0;
-	private int timeCounter = 0;
-	
 	public DungeonGame() {
 		currLevel = 0;
 		dungeon = new ArrayList<DungeonFloor>();
@@ -129,7 +125,6 @@ public class DungeonGame extends Observable {
 	}
 	
 	public void move(AnimateObject mover, int xFactor, int yFactor) {
-		long start = System.nanoTime();
 		
 		int xDelta = xFactor * mover.getStride();
 		int yDelta = yFactor * mover.getStride();
@@ -174,15 +169,9 @@ public class DungeonGame extends Observable {
 		mover.setXpos(Math.min(level.getMapWidth() - mover.SIZE, Math.max(0, mover.getPos().x + xDelta)));
 		mover.setYpos(Math.min(level.getMapHeight() - mover.SIZE, Math.max(0, mover.getPos().y + yDelta)));
 		moveFloors((Stair) stairs);
-		
-		if(timeCounter < 30000) {
-			long delta = System.nanoTime() - start;
-			aveTime = ((aveTime * timeCounter) + delta) / ++timeCounter;
-		} // End of performance testing code
 	}
 	
 	public void move2(AnimateObject mover, int xFactor, int yFactor) {
-		long start = System.nanoTime();
 		
 		int xDelta = xFactor * mover.getStride();
 		int yDelta = yFactor * mover.getStride();
@@ -237,12 +226,6 @@ public class DungeonGame extends Observable {
 		mover.setXpos(Math.min(level.getMapWidth() - mover.SIZE, Math.max(0, mover.getPos().x + xDelta)));
 		mover.setYpos(Math.min(level.getMapHeight() - mover.SIZE, Math.max(0, mover.getPos().y + yDelta)));
 		moveFloors((Stair) stairs);
-		
-		// Performance test code
-		if(timeCounter < 30000) {
-			long delta = System.nanoTime() - start;
-			aveTime = ((aveTime * timeCounter) + delta) / ++timeCounter;
-		} // End of performance testing code
 	}
 	
 	public void moveFloors(Stair stairs) {
@@ -370,7 +353,4 @@ public class DungeonGame extends Observable {
 	public int getMenuSelection() { return menuSelection; }
 	public SQLManager getSaves() { return saves; }
 	
-	public void printTime() {
-		System.out.println("move(): " + aveTime + "ns, with a sample size of " + timeCounter);
-	}
 }
